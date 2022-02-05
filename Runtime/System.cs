@@ -16,13 +16,24 @@ namespace MiddleMast.GameplayFramework
         [SerializeField] private SetupTiming _setupTiming = SetupTiming.Start;
         [SerializeField] private List<Manager> _managers = new List<Manager>();
 
-        public virtual void Setup()
+        public TManager GetManager<TManager>()
         {
             for (int i = 0; i < _managers.Count; i++)
             {
                 Manager manager = _managers[i];
-                manager.Setup();
+
+                if (manager is TManager casted)
+                {
+                    return casted;
+                }
             }
+
+            return default;
+        }
+
+        public virtual void Setup()
+        {
+            SetupManagers();
         }
 
         public virtual void Tick()
@@ -35,6 +46,15 @@ namespace MiddleMast.GameplayFramework
         public virtual void Dispose()
         {
             DisposeManagers();
+        }
+
+        protected virtual void SetupManagers()
+        {
+            for (int i = 0; i < _managers.Count; i++)
+            {
+                Manager manager = _managers[i];
+                manager.Setup();
+            }
         }
 
         protected virtual void TickManagers(float deltaTime)

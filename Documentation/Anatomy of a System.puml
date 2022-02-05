@@ -1,0 +1,21 @@
+﻿@startuml
+'https://plantuml.com/class-diagram
+
+package Market
+{
+class MarketSystem
+
+package Market.Basket
+{
+class BasketManager
+}
+package Marker.Clients
+{
+class ClientManager
+}
+
+MarketSystem -down-> BasketManager 
+MarketSystem -down-> ClientManager
+}
+
+@enduml

@@ -1,0 +1,21 @@
+﻿@startuml
+'https://plantuml.com/class-diagram
+
+class MarketSystem
+class CheckoutManager
+class ClientManager
+
+interface ICheckOutHandler
+{
+void HandleCheckOut(GameObject client);
+}
+
+ClientManager ..|> ICheckOutHandler : Implements
+
+MarketSystem -down-> CheckoutManager
+
+MarketSystem -down-> ClientManager
+
+CheckoutManager ..> ICheckOutHandler : HandleCheckOut(client);
+
+@enduml

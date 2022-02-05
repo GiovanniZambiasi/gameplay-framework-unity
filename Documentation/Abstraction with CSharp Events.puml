@@ -1,0 +1,18 @@
+﻿@startuml
+'https://plantuml.com/class-diagram
+
+class MarketSystem
+class CheckoutManager
+{
+event Action<GameObject> OnCheckoutCompleted;
+}
+class ClientManager
+{
+void HandleClientCheckedOut(GameObject client);
+}
+
+CheckoutManager .up.> MarketSystem : OnCheckoutCompleted(GameObject client);
+
+MarketSystem -down-> ClientManager : HandleClientCheckedOut(client);
+
+@enduml
