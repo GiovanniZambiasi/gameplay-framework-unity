@@ -6,7 +6,9 @@ A solid, battle-tested framework to architect games in Unity.
 
 ## Callbacks
 
-This framework defines *custom callbacks*. This is done to avoid the inconsistencies and performance concerns of Unity's built-in callbacks. Unity callbacks should be avoided as often as possible.
+This framework defines *custom callbacks*. This is done to avoid the inconsistencies and performance concerns of Unity's built-in *life-cycle callbacks\**. Unity callbacks should be avoided as often as possible.
+
+<a name="life-cycle-callbacks">\* *Unity's Life-cycle related callbacks are:* `Awake`, `Start`, `Update`, and `OnDestroy`</a>
 
 ### Custom callback cheat sheet
 
@@ -27,3 +29,26 @@ A `System` can encapsulate it's behaviour using `Manager`s. It can have any numb
 ![image](https://user-images.githubusercontent.com/46461122/152656464-d37024dc-b370-4d74-8fb4-e41ed753a112.png)
 During `Setup`, the `System` will initialize each `Manager`, in the exact order of the hierarchy. In the example above, `EarlyManager` will be setup *first*, and `LateManager` will be setup *last*. This is also the order in which the `Tick` funcitions will get called.
 `Dispose` is a bit different. When the `System` is disposing it's `Managers`, this will happen in the **reverse order**. In the example above, `LateManager` will be the *first disposed*, and `EarlyManager` will be *last*. In most cases, this is the desired behaviour.
+
+# Managers
+A `Manager` is the basic *building-block* of a `System`. The main difference between `System`s and `Manager`s is that **`Manager`s are not autonomous**. This means that their life-cycles must be managed entirely by `System`s. In other words, they must not implement any [*life-cycle related*](#life-cycle-callbacks) Unity callbacks. `Manager`s already implement default life-cycle callbacks, but more callbacks can be defined to match your game's needs. In a turn-based game, you could define `TurnEnd` and `TurnStart` callbacks, passed along to your `Manager`s via some `GameplaySystem`, for example.
+
+## Managing dependencies
+`Manager`s are likely to have varying dependencies that must be fulfilled during their `Setup`. You could have a `StoreManager` which needs a reference to a `StoreData` `ScriptableObject`, for example. In this case, the default `Setup` callback may not be so useful, and *custom overloads* should be defined. It's encouraged to use the same naming for your default callback overloads. For example, the `StoreManager` could have a `Setup(StoreData storeData)` overload for the default `Setup` callback. The `System` could then *override* the `SetupManagers` method, and call the overloaded version of `Setup`:
+```cs
+public class MenuSystem : System
+{
+    [SerializeField] private StoreData _storeData;
+
+    protected override void SetupManagers()
+    {
+        base.SetupManagers();
+
+        StoreManager storeManager = GetManager<StoreManager>();
+        storeManager.Setup(_storeData);
+    }
+}
+```
+
+
+
