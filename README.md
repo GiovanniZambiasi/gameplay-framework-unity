@@ -36,7 +36,7 @@ During `Setup`, the `System` will initialize each `Manager`, in the exact order 
 `Dispose` is a bit different. When the `System` is disposing it's `Managers`, this will happen in the **reverse order**. In the example above, `LateManager` will be the *first disposed*, and `EarlyManager` will be *last*. In most cases, this is the desired behaviour.
 
 # Managers
-A `Manager` is the basic *building-block* of a `System`. The main difference between `System`s and `Manager`s is that **`Manager`s are not autonomous**. This means that their life-cycles must be managed entirely by a `System`. In other words, they must not implement any [*life-cycle related*](#life-cycle-callbacks) Unity callbacks. `Manager`s already implement default life-cycle callbacks, but more callbacks can be defined to match your game's needs. In a turn-based game, you could define `TurnEnd` and `TurnStart` callbacks, passed along to your `Manager`s via some `GameplaySystem`, for example.
+A `Manager` is the basic *building-block* of a `System`. The main difference between `System`s and `Manager`s is that **`Manager`s are not autonomous**. This means that their life-cycles must be managed entirely by a `System`. In other words, they must not implement any [*life-cycle related*](#life-cycle-callbacks) Unity callbacks. `Manager`s already implement default life-cycle callbacks, but more callbacks can be defined to match your game's needs. In a turn-based game, you could define `TurnEnd` and `TurnStart` callbacks, passed along to your `Manager`s by some `GameplaySystem`, for example.
 
 Just like with `System`s, **communication between `Manager`s must always be abstracted**. Abstraction is a good practice, and in most cases *should be encouraged*. It enables the developers to write clean, encapsulated code that is easier **understood, managed and tested.** With that in mind, `Manager`s should also have their own `namespaces`:
 
@@ -61,7 +61,7 @@ public class MenuSystem : System
 ```
 
 ## Abstraction
-As mentioned before, *abstraction is important*. `Manager`s must never communicate directly with one another. There are many ways of achieving this, but a few options could be:
+As mentioned before, *abstraction is important*. `Manager`s must never communicate directly with one another. There are many ways of achieving this, but here are some options:
 - Using [C# events](https://docs.microsoft.com/en-us/dotnet/standard/events/):
   - A `Manager` could declare a specific `event` for when something happens. The `System` could subscribe to this event, and pass the callback along to another `Manager`  
 ![Abstraction with CSharp Events](https://user-images.githubusercontent.com/46461122/152659476-24bb47ae-e87f-48e6-ba9b-e5bf1312619b.png)
