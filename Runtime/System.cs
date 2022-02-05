@@ -16,7 +16,7 @@ namespace MiddleMast.GameplayFramework
         [SerializeField] private SetupTiming _setupTiming = SetupTiming.Start;
         [SerializeField] private List<Manager> _managers = new List<Manager>();
 
-        public void Setup()
+        public virtual void Setup()
         {
             for (int i = 0; i < _managers.Count; i++)
             {

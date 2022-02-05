@@ -1,0 +1,18 @@
+{
+    "name": "MiddleMast.GameplayFramework.Editor",
+    "rootNamespace": "MiddleMast.GameplayFramework.Editor",
+    "references": [
+        "GUID:b0abcc1e8f5e328438cf2a18ca1deba9"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
