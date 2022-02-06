@@ -1,8 +1,5 @@
 # Gio's Gameplay Framework for Unity
 
-A solid, battle-tested framework to architect games in Unity. This repository is meant to be used as a [UPM package](https://docs.unity3d.com/Manual/upm-ui.html).
-
-# Summary
 Games change **a lot** during development, but code *isn't always easy to change*. Games also need *a lot of testing*, but code isn't always *easy to test*. Teams can sometimes change during development, and code *isn't always easy to understand*, especially for newcomers. With these 3 issues in mind, I've developed this *Gameplay Framework*. It's been applied successfully in a commercial project, and the team has adapted to it quite well. Since Unity doesn't have a standard gameplay framework, I hope this helps other games get build more *easily* and *responsibly*.
 
 ## Installation:
@@ -204,11 +201,11 @@ There are many ways of achieving abstraction, but here are some examples involvi
 ## Wizards and Goblins
 Our goal in this chapter is to make a `Wizard` that can cast a `Fireball` at a `Goblin`. This should provide a good understanding of how the framework is meant to be used.
 
-### Casting a fireball
 This example requires 3 `Entities` with corresponding `Manager`s (and therefore, 3 nested namespaces):  
 ![image](https://user-images.githubusercontent.com/46461122/152685659-967cbe6e-41d0-4ed8-9ec9-218fc611a48b.png)  
 *Consider each folder in the example a C# `namespace`*
 
+### Casting a fireball
 Now, the `Wizard` needs to be able to cast a `Fireball`, but they're in separate namespaces. Simply including the `using WizardsAndGoblins.Spells` directive in any of the `Wizard`'s scripts would be a violation of the [rule of abstraction](#rules-3). This is where abstraction comes into play:
 
 We need to define a communication layer between `Wizards` and their `Spells`. For that, we will declare an interface:
@@ -242,7 +239,7 @@ namespace WizardsAndGoblins.Spells
     }
 }
 ```
-For now, the `Activate` method is all the `Wizard` needs to be able to tell with it's `Fireball` to fly forward. Now, *how do we create an `Entity` with another `Entity`*? For that, we will need another interface:
+For now, the `Activate` method is all the `Wizard` needs to be able to communicate with it's `Fireball`. Now, *how do we create an `Entity` with another `Entity`*? For that, we will need another interface:
 ```cs
 namespace WizardsAndGoblins
 {
