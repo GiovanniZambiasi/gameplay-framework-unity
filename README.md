@@ -1,6 +1,6 @@
 # Gio's Gameplay Framework for Unity
 
-Games change **a lot** during development, but code *isn't always easy to change*. Games also need *a lot of testing*, but code isn't always *easy to test*. Teams can sometimes change during development, and code *isn't always easy to understand*, especially for newcomers. With these 3 issues in mind, I've developed this *Gameplay Framework*. It's been applied successfully in a commercial project, and the team has adapted to it quite well. Since Unity doesn't have a standard gameplay framework, I hope this helps other games get build more *easily* and *responsibly*.
+Games change **a lot** during development, but code *isn't always easy to change*. Games also need *a lot of testing*, but code isn't always *easy to test*. Teams can sometimes change during development, and code *isn't always easy to understand*, especially for newcomers. With these 3 issues in mind, I've developed this *Gameplay Framework*. It's been applied successfully in a commercial project, and the team has adapted to it quite well. Since Unity doesn't have a standard gameplay framework, I hope this helps other games get built more *easily* and *responsibly*.
 
 ## Installation:
 Install via UPM using the link: `https://github.com/GiovanniZambiasi/gameplay-framework-unity.git`
@@ -66,9 +66,7 @@ Each `System` must be in it's own `GameObject` | 🟥
 Each `System` should be in a separate [Assembly](https://docs.unity3d.com/Manual/ScriptCompilationAssemblyDefinitionFiles.html) | 🟨
 Keep all `System`s at the root of a *Scene* | 🟨
 Make all your `System`s [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\* | 🟨
-Add the `System` suffix to all `Systems` (and the `GameObjects`' names should match the type names) | 🟩
-
-  
+Add the `System` suffix to all `Systems` (and the `GameObjects`' names should match the type names) | 🟩    
 *\* For unit testing purposes, you can use the `InternalsVisibleTo` attribute to give your test assemblies access to your `System`*
 
 ## Encapsulation
@@ -91,11 +89,14 @@ Rule | [Severity](#severity-guide)
 `Manager`s must define their own [`namespaces`]\*| 🟥
 `Manager`s **must not implement any [*life-cycle related*](#life-cycle-callbacks)** Unity callbacks | 🟥
 Each `Manager`s must live in it's own `GameObject`, and must be a [first-level-child](#managers-hierarchy) of a `System` | 🟥
-Add the `Manager` suffix to all `Managers` (and their `GameObject`'s names should match their type names) | 🟩
+Make all your `Managers` [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\*\* | 🟨
+Add the `Manager` suffix to all `Managers` (and their `GameObject`'s names should match their type names) | 🟩  
 
 *\* Example:*  
 ![Anatomy of a System](https://user-images.githubusercontent.com/46461122/152659092-e5dedab5-48a6-431c-8f3b-8281e3120fa9.png)  
 *In the diagram above, `Market` is the root namespace of the `System`. Each `Manager` defines it's own child-namespace, and must never reference one another*
+
+*\*\* For unit testing purposes, you can use the `InternalsVisibleTo` attribute to give your test assemblies access to your `Manager`*
 
 ## Managing dependencies
 `Manager`s are likely to have varying dependencies that must be fulfilled during their `Setup`. You could have a `StoreManager` which needs a reference to a `StoreData` `ScriptableObject`, for example. In this case, the default `Setup` callback may not be so useful, and *custom overloads* should be defined. It's encouraged to use the same naming for your default callback overloads. For example, the `StoreManager` could have a `Setup(StoreData storeData)` overload for the default `Setup` callback. The `System` could then *override* the `SetupManagers` method, and call the overloaded version of `Setup`:
@@ -114,7 +115,7 @@ public class MenuSystem : System
 }
 ```
 # Entities
-Entities are the individual objects that make up your gameplay. A `Zombie`, the `Player` or a `WoodenBox` could all be considered entities. Most games organize their entities into `Prefabs`, and these objects can be spawned at runtime, or be dragged into a scene beforehand. They can have various `Component`s, such as a `Rigidbody`, `HealthComponent` or an `Animator`. However, every `Entity` must be defined as it's own `MonoBehaviour`:
+`Entities` are the individual objects that make up your gameplay. A `Zombie`, the `Player` or a `WoodenBox` could all be considered entities. Most games organize their entities into `Prefabs`, and these objects can be spawned at runtime, or be dragged into a scene beforehand. They can have various `Component`s, such as a `Rigidbody`, `HealthComponent` or an `Animator`. However, every `Entity` must be defined as it's own `MonoBehaviour`:
 ```cs
 public class Wizard : Entity
 {
@@ -125,13 +126,15 @@ public class Wizard : Entity
 ## Rules
 Rule | [Severity](#severity-guide)
 :--- | :---:
-Entities cannot live in the root `namespace` of an assembly | 🟥
-Entities **must not implement any [*life-cycle related*](#life-cycle-callbacks)** Unity callbacks | 🟥
+`Entities` cannot live in the root `namespace` of an assembly | 🟥
+`Entities` **must not implement any [*life-cycle related*](#life-cycle-callbacks)** Unity callbacks | 🟥
 Each `Entity` must live in it's own `GameObject` | 🟥
 **Communication between different entities must always be abstracted** (an `Entity` shouldn't have any knowledge about another `Entity`) | 🟥
 Each `Entity` must have a corresponding `Manager`\* | 🟨
+Make all your `Entities` [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\*\* | 🟨
 
-*\* There could be some cases where a `System` is simple enough that it can manage entities by itself*
+*\* There could be some cases where a `System` is simple enough that it can manage entities by itself*  
+*\*\*For unit testing purposes, you can use the `InternalsVisibleTo` attribute to give your test assemblies access to your `Entity`**
 
 ## What about composition?
 Composition should always be strived for. However, in some cases, we need a "central point" for our game's entities to orchestrate *complex interactions* between `Component`s. For example: Say you had a `HealthComponent` and a `MovementComponent`. You want to reduce your `Player`'s movement speed when their health drops below 50%. To achieve this, you need some sort of communication between those two components. That's where the `Player` `Entity` comes in:
@@ -164,13 +167,65 @@ With good abstraction, you *could* achieve this "slow-down-when-almost-dying" be
 ## So how does a Wizard cast a Fireball?
 Later in this document, there's an [example](#wizards-and-goblins) of how to implement a `Wizard` that can cast `Fireballs` at `Goblins` following all the rules of this framework.
 
+# Components
+Components are tiny, autonomous, encapsulated slices of behaviour that live inside your `Systems`, `Managers` or `Entities`. In fact, any `MonoBehaviour` *is considered* a component by the engine. This doesn't mean that all `MonoBehaviours` you create are components *from a conceptual standpoint*. `Systems`, `Managers` or `Entities`, for example, are *not* components. Most components are modular by nature. Some are so modular that they can just be added into an object and they'll work, without any need for external help. This is a **great resource**, and it should be leveraged extensively. Since we want to preserve the modular and autonomous nature of *most* components, they **can** implement [Unity's life-cycle callbacks](#life-cycle-callbacks).
+
+To create a component, simply make a `MonoBehaviour` how you usually would. A great example of a modular component is the `Rigidbody`. You can just add it to any object and they'll fall downwards (or upwards), depending on your gravity settings. If you want your components to be managed by their owning object, you can do so. It's up to the developer to decide whether the component is in fact autonomous or not:
+
+Take a `BillboardComponent`, for example. It can simply point a transform towards the main camera on `Update`. This is a component that *can* be autonomous:
+```cs
+namespace DogsAndBillboards
+{
+    public class BillboardComponent : MonoBehaviour
+    {
+        private void LateUpdate()
+        {
+            Camera mainCamera = Camera.main;
+            Vector3 lookDirection = (mainCamera.transform.position - transform.position).normalized;
+            transform.rotation = Quaternion.LookRotation(lookDirection);
+        }
+    }
+}
+```  
+This component *doesn't need* to be managed. It can resolve its dependencies by itself, and doesn't communicate with any other `MonoBehaviours`. This is not always the case:
+Say we have a `Dog` `Entity` with a `DogAnimations` component. The `Dog` has a `BreedData` `ScriptableObject` that contains important information. The `DogAnimation` component needs to be setup by it's owning `Dog`, so it can initialize itself with the correct `BreedData`:
+```cs
+namespace DogsAndBillboards.Dogs
+{
+    public class BreedData : ScriptableObject
+    {
+        // Information about size, sound and animations...
+    }
+    
+    public class DogAnimations : MonoBehaviour
+    {
+        public void Setup(BreedData data)
+        {
+            // Initializes itself based on the breed
+        }
+    }
+    
+    public class Dog : Entity
+    {
+        private DogAnimations _animations;
+
+        public void Setup(BreedData breed)
+        {
+            _animations = GetComponent<DogAnimations>();
+            _animations.Setup(breed);
+        }
+    }
+}
+```  
+In this case `DogAnimations` is still a component, but it's managed by an `Entity`.
+
 # Abstraction
-As mentioned before: *abstraction is important* and, in most cases, *should be encouraged*. It enables developers to write clean, encapsulated code that is easily **understood, managed and tested.** However, as important as it may be, abstraction can also be quite complicated to apply consistently.
+As mentioned before: *abstraction is important* and, in most cases, *should be encouraged*. It enables developers to write clean, encapsulated code that is easily **changed, tasted and understood.** However, as important as it may be, abstraction can also be quite complicated to apply consistently.
 
 ## When do I use abstraction?
-Provided you've followed all the rules from the chapters above, a good guideline you can follow when it comes to abstraction is this:
+Provided you've followed all the rules from the chapters above, you can use `namespaces` to define boundary lines in your `Systems`. This will help the team identify *where* abstraction should be applied. A good, simple rule you can follow when it comes to abstraction is this:
 
-- **Types should only know about other types in their own `namespace`s**
+- **Types should only know about other types in their own `namespace`s** 🟥
 
 This doesn't mean that you shouldn't use abstraction within a particular `namespace`. It can, and should, be considered. However, the above quote should be followed *as a rule*. Here's an example:
 
