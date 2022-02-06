@@ -1,0 +1,30 @@
+﻿@startuml
+'https://plantuml.com/class-diagram
+
+package TheAncientScrolls
+{
+    class AttributeSet
+    
+   interface IInteractable
+   
+    interface ICatchFire
+
+    AttributeSet .right. IInteractable
+    AttributeSet..ICatchFire
+    IInteractable..ICatchFire
+
+    package TheAncientScrolls.Dragons
+    {
+        class Dragon
+        class FlyingComponent
+    }
+    
+    Dragon..FlyingComponent
+    
+    TheAncientScrolls.Dragons ..> IInteractable
+    TheAncientScrolls.Dragons ..> ICatchFire
+    TheAncientScrolls.Dragons ..> AttributeSet
+
+}
+
+@enduml
