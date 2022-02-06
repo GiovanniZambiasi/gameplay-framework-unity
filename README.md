@@ -288,7 +288,7 @@ namespace WizardsAndGoblins.Spells
     }
 }
 ```
-I have also added some code that makes the `SpellFactory` register spells, and update them using `Tick`. 
+I have also added some code that makes the `SpellManager` register spells, and update them using `Tick`. 
 
 With `ISpellFactory`, we managed to create an abstract way to spawn instances of `Fireball` (or any other `ISpell` that we need to create in the future). Now, we can define the `Wizard`'s `CastSpell` method:
 ```cs
@@ -367,7 +367,7 @@ namespace WizardsAndGoblins
 ```
 And *voila! Just like magic,* the `Wizard` is able to cast a `Fireball`, without any code coupling. Now, why go through all the trouble?
 
-A great benefit of all this infrastructure is this: Notice how the `Wizard` `Entity` has no idea of **what the spell** is, or **what is does**. If we wanted to completely change what spell the `Wizard` casts, we could easily do so, without event having to open the `Wizard` class for editing. All that we needed to do was to define another spell `Entity` that had a different behaviour. A `Heal` spell, for example, could look like this:
+A great benefit of all this infrastructure is this: Notice how the `Wizard` `Entity` has no idea of **what the spell is**, or **what it does**. If we wanted to completely change what spell the `Wizard` casts, we could easily do so, without event having to open the `Wizard`'s script for editing. All that we would need to do is to define another `ISpell` `Entity` with a different behaviour. A `Heal` spell, for example, could look like this:
 ```cs
 namespace WizardsAndGoblins.Spells
 {
