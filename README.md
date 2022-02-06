@@ -239,7 +239,7 @@ namespace WizardsAndGoblins.Spells
     }
 }
 ```
-For now, the `Activate` method is all the `Wizard` needs to be able to communicate with it's `Fireball`. Now, *how do we create an `Entity` with another `Entity`*? For that, we will need another interface:
+For now, the `Activate` method is all the `Wizard` needs to be able to communicate with it's `Fireball`. Now, *how do we create an `Entity` from another `Entity`*? For that, we will need another interface:
 ```cs
 namespace WizardsAndGoblins
 {
