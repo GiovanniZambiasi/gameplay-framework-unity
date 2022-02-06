@@ -29,7 +29,7 @@ This framework defines *custom callbacks*. This is done to avoid the inconsisten
 
 ### Why custom callbacks?
 
-Having manual control over the order of the *setup/update/dispose* of your classes can be **very beneficial**. This avoids race-conditions between `MonoBehaviour`s (ever had a bug where some `MonoBehaviour`'s `Start` method got called before another's, and the former depended on the latter to initialize itself?). It also enables any developer in the project to understand **exactly in what order** things are happenning, without having to worry about the [Script Execution Order settings](https://docs.unity3d.com/Manual/class-MonoManager.html) hidden away in a menu. Defining custom `Tick(float deltaTime)` methods can also be extremely useful when writing [unit tests](https://docs.unity3d.com/2017.4/Documentation/Manual/testing-editortestsrunner.html).
+Having manual control over the order of the *setup/update/dispose* of your classes can be **very beneficial**. This avoids race-conditions between `MonoBehaviours` (ever had a bug where some `MonoBehaviour`'s `Start` method got called before another's, and the former depended on the latter to initialize itself?). It also enables any developer in the project to understand **exactly in what order** things are happenning, without having to worry about the [Script Execution Order settings](https://docs.unity3d.com/Manual/class-MonoManager.html) hidden away in a menu. Defining custom `Tick(float deltaTime)` methods can also be extremely useful when writing [unit tests](https://docs.unity3d.com/2017.4/Documentation/Manual/testing-editortestsrunner.html).
 
 ## Rules
 
@@ -62,7 +62,7 @@ _Project/
 ```
 
 # Systems
-A `System` is an **entry point with the engine**. It's meant to be an autonomous class that initializes/disposes/updates itself through [*Callbacks*](#callbacks). `System`s can be big or small, and you can define as many as you like. While designing `System`s, try to find *isolated chunks of behaviour* in your project. This will help keep related things together, and will naturally avoid making a mess with your scripts and `namespace`s. `System`s must be **as indepentent from one another as possible**. For a *Counter-Strike* style game, you could define the gameplay portion as a `GameplaySystem`, and the Menus and matchmaking as a `MenuSystem`, for example.
+A `System` is an **entry point with the engine**. It's meant to be an autonomous class that initializes/disposes/updates itself through [*Callbacks*](#callbacks). `Systems` can be big or small, and you can define as many as you like. While designing `Systems`, try to find *isolated chunks of behaviour* in your project. This will help keep related things together, and will naturally avoid making a mess with your scripts and `namespaces`. `Systems` must be **as indepentent from one another as possible**. For a *Counter-Strike* style game, you could define the gameplay portion as a `GameplaySystem`, and the Menus and matchmaking as a `MenuSystem`, for example.
 
 ## Rules
 
@@ -72,15 +72,15 @@ Each `System` must be inside it's own `namespace` | 🟥
 Each `System` must be in it's own `GameObject` | 🟥
 **Communication between `Systems` must always be abstracted** (a `System` shouldn't have *any* knowledge about another `System`) | 🟥
 Each `System` should be in a separate [Assembly](https://docs.unity3d.com/Manual/ScriptCompilationAssemblyDefinitionFiles.html) | 🟨
-Keep all `System`s at the root of a *Scene* | 🟨
-Make all your `System`s [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\* | 🟨
+Keep all `Systems` at the root of a *Scene* | 🟨
+Make all your `Systems` [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\* | 🟨
 Add the `System` suffix to all `Systems` (and the `GameObjects`' names should match the type names) | 🟩    
 
 *\* For unit testing purposes, you can use the `InternalsVisibleTo` attribute to give your test assemblies access to your `System`*
 
 ## Encapsulation
 
-A `System` can encapsulate it's behaviour using `Manager`s. It can have any number of them, and their lifetimes will be managed by their owning `System`. They have generic callbacks for `Setup`, `Dispose` and `Tick(float deltaTime)`, but can implement any overloads your project requires. `Manager`s can be added to a system using the *hierarchy* of a *Unity scene*. Any `GameObject` with a `Manager` component **that's a child of a `System`** will be registered:
+A `System` can encapsulate it's behaviour using `Managers`. It can have any number of them, and their lifetimes will be managed by their owning `System`. They have generic callbacks for `Setup`, `Dispose` and `Tick(float deltaTime)`, but can implement any overloads your project requires. `Managers` can be added to a system using the *hierarchy* of a *Unity scene*. Any `GameObject` with a `Manager` component **that's a child of a `System`** will be registered:
 
 <a name="managers-hierarchy">![image](https://user-images.githubusercontent.com/46461122/152656464-d37024dc-b370-4d74-8fb4-e41ed753a112.png)</a>
 
@@ -88,16 +88,16 @@ During `Setup`, the `System` will initialize each `Manager`, in the exact order 
 `Dispose` is a bit different. When the `System` is disposing it's `Managers`, this will happen in the **reverse order**. In the example above, `LateManager` will be the *first disposed*, and `EarlyManager` will be *last*. In most cases, this is the desired behaviour.
 
 # Managers
-A `Manager` is the basic *building-block* of a `System`. The main difference between `System`s and `Manager`s is that **`Manager`s are not autonomous**. This means that their life-cycles must be managed entirely by a `System`. In other words, they must not implement any [*life-cycle related*](#life-cycle-callbacks) Unity callbacks. `Manager`s already implement default life-cycle callbacks, but more callbacks can be defined to match your game's needs. In a turn-based game, you could define `TurnEnd` and `TurnStart` callbacks, passed along to your `Manager`s by some `GameplaySystem`, for example.
+A `Manager` is the basic *building-block* of a `System`. The main difference between `Systems` and `Managers` is that **`Managers` are not autonomous**. This means that their life-cycles must be managed entirely by a `System`. In other words, they must not implement any [*life-cycle related*](#life-cycle-callbacks) Unity callbacks. `Managers` already implement default life-cycle callbacks, but more callbacks can be defined to match your game's needs. In a turn-based game, you could define `TurnEnd` and `TurnStart` callbacks, passed along to your `Managers` by some `GameplaySystem`, for example.
 
 ## Rules
 
 Rule | [Severity](#severity-guide)
 :--- | :---:
-**Communication between `Manager`s must always be abstracted (a `Manager` shouldn't have any knowledge about another `Manager`)** | 🟥
-`Manager`s must define their own `namespaces`\*| 🟥
-`Manager`s **must not implement any [*life-cycle related*](#life-cycle-callbacks)** Unity callbacks | 🟥
-Each `Manager`s must live in it's own `GameObject`, and must be a [first-level-child](#managers-hierarchy) of a `System` | 🟥
+**Communication between `Managers` must always be abstracted (a `Manager` shouldn't have any knowledge about another `Manager`)** | 🟥
+`Managers` must define their own `namespaces`\*| 🟥
+`Managers` **must not implement any [*life-cycle related*](#life-cycle-callbacks)** Unity callbacks | 🟥
+Each `Managers` must live in it's own `GameObject`, and must be a [first-level-child](#managers-hierarchy) of a `System` | 🟥
 Make all your `Managers` [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\*\* | 🟨
 Add the `Manager` suffix to all `Managers` (and their `GameObject`'s names should match their type names) | 🟩  
 
@@ -108,7 +108,7 @@ Add the `Manager` suffix to all `Managers` (and their `GameObject`'s names shoul
 *\*\* For unit testing purposes, you can use the `InternalsVisibleTo` attribute to give your test assemblies access to your `Manager`*
 
 ## Managing dependencies
-`Manager`s are likely to have varying dependencies that must be fulfilled during their `Setup`. You could have a `StoreManager` which needs a reference to a `StoreData` `ScriptableObject`, for example. In this case, the default `Setup` callback may not be so useful, and *custom overloads* should be defined. It's encouraged to use the same naming for your default callback overloads. For example, the `StoreManager` could have a `Setup(StoreData storeData)` overload for the default `Setup` callback. The `System` could then *override* the `SetupManagers` method, and call the overloaded version of `Setup`:
+`Managers` are likely to have varying dependencies that must be fulfilled during their `Setup`. You could have a `StoreManager` which needs a reference to a `StoreData` `ScriptableObject`, for example. In this case, the default `Setup` callback may not be so useful, and *custom overloads* should be defined. It's encouraged to use the same naming for your default callback overloads. For example, the `StoreManager` could have a `Setup(StoreData storeData)` overload for the default `Setup` callback. The `System` could then *override* the `SetupManagers` method, and call the overloaded version of `Setup`:
 ```cs
 public class MenuSystem : System
 {
@@ -124,7 +124,7 @@ public class MenuSystem : System
 }
 ```
 # Entities
-`Entities` are the individual objects that make up your gameplay. A `Zombie`, the `Player` or a `WoodenBox` could all be considered entities. Most games organize their entities into `Prefabs`, and these objects can be spawned at runtime, or be dragged into a scene beforehand. They can have various `Component`s, such as a `Rigidbody`, `HealthComponent` or an `Animator`. However, every `Entity` must be defined as it's own `MonoBehaviour`:
+`Entities` are the individual objects that make up your gameplay. A `Zombie`, the `Player` or a `WoodenBox` could all be considered entities. Most games organize their entities into `Prefabs`, and these objects can be spawned at runtime, or be dragged into a scene beforehand. They can have various `Components`, such as a `Rigidbody`, `HealthComponent` or an `Animator`. However, every `Entity` must be defined as it's own `MonoBehaviour`:
 ```cs
 public class Wizard : Entity
 {
@@ -171,7 +171,7 @@ public class Player : Entity
 ```
 It's a central point of communication between the two. That way, your `HealthComponent` only needs to wory about damage and health, and your `MovementComponent` only needs to worry about translation an physics. 
 
-With good abstraction, you *could* achieve this "slow-down-when-almost-dying" behaviour **without the need for a `Player`**. If your code is modular enough that it doesn't need the `Entity` to be defined in code, there's no need to define one. `Entities` will be most useful for objects that have a high number of `Component`s, all performing complex interactions with one another.
+With good abstraction, you *could* achieve this "slow-down-when-almost-dying" behaviour **without the need for a `Player`**. If your code is modular enough that it doesn't need the `Entity` to be defined in code, there's no need to define one. `Entities` will be most useful for objects that have a high number of `Components`, all performing complex interactions with one another.
 
 ## So how does a Wizard cast a Fireball?
 Later in this document, there's an [example](#wizards-and-goblins) of how to implement a `Wizard` that can cast `Fireballs` at `Goblins` following all the rules of this framework.
