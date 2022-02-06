@@ -2,6 +2,14 @@
 
 Games change **a lot** during development, but code *isn't always easy to change*. Games also need *a lot of testing*, but code isn't always *easy to test*. Teams can sometimes change during development, and code *isn't always easy to understand*, especially for newcomers. With these 3 issues in mind, I've developed this *Gameplay Framework*. It's been applied successfully in a commercial project, and the team has adapted to it quite well. Since Unity doesn't have a standard gameplay framework, I hope this helps other games get built more *easily* and *responsibly*.
 
+## Table of contents
+1. [Systems](#systems)
+1. [Managers](#managers)
+1. [Entities](#entities)
+1. [Components](#components)
+1. [Abstraction](#abstraction)
+1. [Examples](#examples)
+
 ## Installation:
 Install via UPM using the link: `https://github.com/GiovanniZambiasi/gameplay-framework-unity.git`
 
@@ -86,7 +94,7 @@ A `Manager` is the basic *building-block* of a `System`. The main difference bet
 Rule | [Severity](#severity-guide)
 :--- | :---:
 **Communication between `Manager`s must always be abstracted (a `Manager` shouldn't have any knowledge about another `Manager`)** | 🟥
-`Manager`s must define their own [`namespaces`]\*| 🟥
+`Manager`s must define their own `namespaces`\*| 🟥
 `Manager`s **must not implement any [*life-cycle related*](#life-cycle-callbacks)** Unity callbacks | 🟥
 Each `Manager`s must live in it's own `GameObject`, and must be a [first-level-child](#managers-hierarchy) of a `System` | 🟥
 Make all your `Managers` [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\*\* | 🟨
