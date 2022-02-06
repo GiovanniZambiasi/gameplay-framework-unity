@@ -20,7 +20,11 @@ namespace MiddleMast.GameplayFramework.Editor
 
         public override void OnInspectorGUI()
         {
-            RefreshManagers();
+            if (!Application.isPlaying)
+            {
+                RefreshManagers();
+            }
+
             DrawSettings();
             DrawManagers();
         }
