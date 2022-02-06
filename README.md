@@ -11,7 +11,7 @@ Install via UPM using the link: `https://github.com/GiovanniZambiasi/gameplay-fr
 
 This framework defines *custom callbacks*. This is done to avoid the inconsistencies and performance concerns of Unity's built-in *life-cycle callbacks\**. Unity callbacks should be avoided as often as possible.
 
-<a name="life-cycle-callbacks">\* *Unity's life-cycle callbacks are:* `Awake`, `Start`, `Update`, and `OnDestroy`</a>
+<a name="life-cycle-callbacks">\* *Unity's life-cycle callbacks are:* `Awake`, `Start`, `Update`/`LateUpdate`/`FixedUpdate`, and `OnDestroy`</a>
 
 ### Custom callback cheat sheet
 
@@ -25,25 +25,59 @@ This framework defines *custom callbacks*. This is done to avoid the inconsisten
 
 Having manual control over the order of the *setup/update/dispose* of your classes can be **very beneficial**. This avoids race-conditions between `MonoBehaviour`s (ever had a bug where some `MonoBehaviour`'s `Start` method got called before another's, and the former depended on the latter to initialize itself?). It also enables any developer in the project to understand **exactly in what order** things are happenning, without having to worry about the [Script Execution Order settings](https://docs.unity3d.com/Manual/class-MonoManager.html) hidden away in a menu. Defining custom `Tick(float deltaTime)` methods can also be extremely useful when writing [unit tests](https://docs.unity3d.com/2017.4/Documentation/Manual/testing-editortestsrunner.html).
 
-### General rules
+## Rules
 
-- All of you project's scripts must live inside the same root folder
-- All assemblies must live inside the root of your scripts folder. **You cannot have assemblies inside another assemblies**
+### Severity guide
+Severity | Description
+:---: | :---:
+🟥 | **Severe**. Must always be followed
+🟨 | **Encouraged**. Should mostly be followed, but can have exceptions
+🟩 | **Suggestion**. May not apply to a specific project
+
+### General rules
+Rule | [Severity](#severity-guide)
+:--- | :---:
+All of your project's scripts must live under the same root folder | 🟨
+All assemblies must live inside their own folder. And that folder must live in the root of your scripts folder. **You cannot have assemblies inside other assemblies**\* | 🟨
+Keep the root namespace of an assembly the same as the assembly name | 🟨
+The `namespaces` in your scripts must match your folder structure, taking the root namespace of the assembly into consideration | 🟨
+
+*\* Example:*
+```
+_Project/
+    '-Scripts/
+        '-WizardsAndGoblins/
+            '-WizardsAndGoblins.asmdef
+        '-WizardsAndGoblins.Editor/
+            '-WizardsAndGoblins.Editor.asmdef
+        '-WizardsAndGoblins.Gameplay/
+            '-WizardsAndGoblins.Gameplay.asmdef
+    // etc..
+```
 
 # Systems
-A `System` is an **entry point with the engine**. It's meant to be an autonomous class that initializes/disposes/updates itself through [*Callbacks*](#callbacks). `System`s can be big or small, and you can define as many as you like. While designing `System`s, try to find *isolated chunks of behaviour* in your project. This will help keep related things together, and will naturally avoid making a mess with your scripts and `namespace`s. For a *Counter-Strike* style game, you could define the gameplay portion as a `GameplaySystem`, and the Menus and matchmaking as a `MenuSystem`, for example.
+A `System` is an **entry point with the engine**. It's meant to be an autonomous class that initializes/disposes/updates itself through [*Callbacks*](#callbacks). `System`s can be big or small, and you can define as many as you like. While designing `System`s, try to find *isolated chunks of behaviour* in your project. This will help keep related things together, and will naturally avoid making a mess with your scripts and `namespace`s. `System`s must be **as indepentent from one another as possible**. For a *Counter-Strike* style game, you could define the gameplay portion as a `GameplaySystem`, and the Menus and matchmaking as a `MenuSystem`, for example.
 
-- Each `System` must be inside it's own `namespace`
-- It's also encouraged to create a separate [Assembly](https://docs.unity3d.com/Manual/ScriptCompilationAssemblyDefinitionFiles.html) for each `System`.
-- `System`s must be **as indepentent from one another as possible**
-- **Communication between `Systems` must always be abstracted** (a `System` shouldn't have *any* knowledge about another `System`)
-- Each `System` must be in it's own `GameObject`
-- It's encouraged to keep all `System`s at the root of a *Scene*
-- It's encouraged to add the `System` suffix to all `Systems` (and the `GameObjects`' names should match the type names)
+## Rules
+
+Rule | [Severity](#severity-guide)
+:--- | :---:
+Each `System` must be inside it's own `namespace` | 🟥
+Each `System` must be in it's own `GameObject` | 🟥
+**Communication between `Systems` must always be abstracted** (a `System` shouldn't have *any* knowledge about another `System`) | 🟥
+Each `System` should be in a separate [Assembly](https://docs.unity3d.com/Manual/ScriptCompilationAssemblyDefinitionFiles.html) | 🟨
+Keep all `System`s at the root of a *Scene* | 🟨
+Make all your `System`s [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\* | 🟨
+Add the `System` suffix to all `Systems` (and the `GameObjects`' names should match the type names) | 🟩
+
+  
+*\* For unit testing purposes, you can use the `InternalsVisibleTo` attribute to give your test assemblies access to your `System`*
+
+## Encapsulation
 
 A `System` can encapsulate it's behaviour using `Manager`s. It can have any number of them, and their lifetimes will be managed by their owning `System`. They have generic callbacks for `Setup`, `Dispose` and `Tick(float deltaTime)`, but can implement any overloads your project requires. `Manager`s can be added to a system using the *hierarchy* of a *Unity scene*. Any `GameObject` with a `Manager` component **that's a child of a `System`** will be registered:
 
-![image](https://user-images.githubusercontent.com/46461122/152656464-d37024dc-b370-4d74-8fb4-e41ed753a112.png)
+<a name="managers-hierarchy">![image](https://user-images.githubusercontent.com/46461122/152656464-d37024dc-b370-4d74-8fb4-e41ed753a112.png)</a>
 
 During `Setup`, the `System` will initialize each `Manager`, in the exact order of the hierarchy. In the example above, `EarlyManager` will be setup *first*, and `LateManager` will be setup *last*. This is also the order in which the `Tick` funcitions will get called.
 `Dispose` is a bit different. When the `System` is disposing it's `Managers`, this will happen in the **reverse order**. In the example above, `LateManager` will be the *first disposed*, and `EarlyManager` will be *last*. In most cases, this is the desired behaviour.
@@ -51,10 +85,19 @@ During `Setup`, the `System` will initialize each `Manager`, in the exact order 
 # Managers
 A `Manager` is the basic *building-block* of a `System`. The main difference between `System`s and `Manager`s is that **`Manager`s are not autonomous**. This means that their life-cycles must be managed entirely by a `System`. In other words, they must not implement any [*life-cycle related*](#life-cycle-callbacks) Unity callbacks. `Manager`s already implement default life-cycle callbacks, but more callbacks can be defined to match your game's needs. In a turn-based game, you could define `TurnEnd` and `TurnStart` callbacks, passed along to your `Manager`s by some `GameplaySystem`, for example.
 
-Just like with `System`s, **communication between `Manager`s must always be abstracted**.  `Manager`s should also have their own `namespaces`:
+## Rules
 
+Rule | [Severity](#severity-guide)
+:--- | :---:
+**Communication between `Manager`s must always be abstracted** | 🟥
+`Manager`s must define their own [`namespaces`]\*| 🟥
+`Manager`s **must not implement any [*life-cycle related*](#life-cycle-callbacks)** Unity callbacks | 🟥
+Each `Manager`s must live in it's own `GameObject`, and must be a [first-level-child](#managers-hierarchy) of a `System` | 🟥
+Add the `Manager` suffix to all `Managers` (and their `GameObject`'s names should match their type names) | 🟩
+
+*\* Example:*  
 ![Anatomy of a System](https://user-images.githubusercontent.com/46461122/152659092-e5dedab5-48a6-431c-8f3b-8281e3120fa9.png)  
-*In the above example, `Market` is the root namespace of the `System`. Each `Manager` defines it's own child-namespace, and must never reference one another*
+*In the diagram above, `Market` is the root namespace of the `System`. Each `Manager` defines it's own child-namespace, and must never reference one another*
 
 ## Managing dependencies
 `Manager`s are likely to have varying dependencies that must be fulfilled during their `Setup`. You could have a `StoreManager` which needs a reference to a `StoreData` `ScriptableObject`, for example. In this case, the default `Setup` callback may not be so useful, and *custom overloads* should be defined. It's encouraged to use the same naming for your default callback overloads. For example, the `StoreManager` could have a `Setup(StoreData storeData)` overload for the default `Setup` callback. The `System` could then *override* the `SetupManagers` method, and call the overloaded version of `Setup`:
@@ -93,7 +136,7 @@ This guideline, in combination with the namespace and assembliy rules from the p
 The root `namespace` of an assembly should be reserved mosttly to interfaces, shared data objects, extension methods and some components. **No `Entity` or `Manager`** should be in the root `namespace` of an assembly.
 
 ## How do I abstract?
-There are many ways of achieving abstraction, but here are some examples:
+There are many ways of achieving abstraction, but here are some examples involving `Managee`s and a `System`:
 - Using [C# events](https://docs.microsoft.com/en-us/dotnet/standard/events/):
   - A `Manager` could declare a specific `event` for when something happens. The `System` could subscribe to this event, and pass the callback along to another `Manager`  
 ![Abstraction with CSharp Events](https://user-images.githubusercontent.com/46461122/152659476-24bb47ae-e87f-48e6-ba9b-e5bf1312619b.png)
