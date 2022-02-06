@@ -75,6 +75,7 @@ Each `System` should be in a separate [Assembly](https://docs.unity3d.com/Manual
 Keep all `System`s at the root of a *Scene* | 🟨
 Make all your `System`s [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\* | 🟨
 Add the `System` suffix to all `Systems` (and the `GameObjects`' names should match the type names) | 🟩    
+
 *\* For unit testing purposes, you can use the `InternalsVisibleTo` attribute to give your test assemblies access to your `System`*
 
 ## Encapsulation
