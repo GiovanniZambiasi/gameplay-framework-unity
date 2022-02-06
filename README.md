@@ -3,6 +3,7 @@
 A solid, battle-tested framework to architect games in Unity. This repository is meant to be used as a [UPM package](https://docs.unity3d.com/Manual/upm-ui.html).
 
 # Summary
+Games change **a lot** during development, but code *isn't always easy to change*. Games also need *a lot of testing*, but code isn't always *easy to test*. Teams can sometimes change during development, and code *isn't always easy to understand*, especially for newcomers. With these 3 issues in mind, I've developed this *Gameplay Framework*. It's been applied successfully in a commercial project, and the team has adapted to it quite well. Since Unity doesn't have a standard gameplay framework, I hope this helps other games get build more *easily* and *responsibly*.
 
 ## Installation:
 Install via UPM using the link: `https://github.com/GiovanniZambiasi/gameplay-framework-unity.git`
@@ -203,11 +204,186 @@ There are many ways of achieving abstraction, but here are some examples involvi
 ## Wizards and Goblins
 Our goal in this chapter is to make a `Wizard` that can cast a `Fireball` at a `Goblin`. This should provide a good understanding of how the framework is meant to be used.
 
-### First things first
+### Casting a fireball
 This example requires 3 `Entities` with corresponding `Manager`s (and therefore, 3 nested namespaces):  
 ![image](https://user-images.githubusercontent.com/46461122/152685659-967cbe6e-41d0-4ed8-9ec9-218fc611a48b.png)  
 *Consider each folder in the example a C# `namespace`*
 
-Now, the `Wizard` needs to be able to cast a `Fireball`, but they're in separate namespaces
+Now, the `Wizard` needs to be able to cast a `Fireball`, but they're in separate namespaces. Simply including the `using WizardsAndGoblins.Spells` directive in any of the `Wizard`'s scripts would be a violation of the [rule of abstraction](#rules-3). This is where abstraction comes into play:
 
+We need to define a communication layer between `Wizards` and their `Spells`. For that, we will declare an interface:
+```cs
+namespace WizardsAndGoblins     // Notice how the interface is declared in the root namespace of the assembly
+{
+    public interface ISpell
+    {
+        void Activate();
+    }
+}
+```
+Then, `Fireball` must implement this interface:
+```cs
+namespace WizardsAndGoblins.Spells
+{
+    internal class Fireball : Entity, ISpell
+    {
+        private Rigidbody _rigidbody;
 
+        public override void Setup()
+        {
+            base.Setup();
+            _rigidbody = GetComponent<Rigidbody>();
+        }
+
+        public void Activate()
+        {
+            _rigidbody.AddRelativeForce(transform.forward * 10f, ForceMode.Impulse);
+        }
+    }
+}
+```
+For now, the `Activate` method is all the `Wizard` needs to be able to tell with it's `Fireball` to fly forward. Now, *how do we create an `Entity` with another `Entity`*? For that, we will need another interface:
+```cs
+namespace WizardsAndGoblins
+{
+    public interface ISpellFactory
+    {
+        ISpell CreateSpell(GameObject spellPrefab, Vector3 position, Vector3 direction);
+    }
+}
+```
+And we can make the `SpellManager` implement it:
+```cs
+namespace WizardsAndGoblins.Spells
+{
+    internal class SpellManager : Manager, ISpellFactory
+    {
+        private List<Entity> _spells = new List<Entity>();
+
+        public override void Tick(float deltaTime)
+        {
+            base.Tick(deltaTime);
+
+            for (int i = 0; i < _spells.Count; i++)
+            {
+                Entity spell = _spells[i];
+                spell.Tick(deltaTime);
+            }
+        }
+
+        public ISpell CreateSpell(GameObject spellPrefab, Vector3 position, Vector3 direction)
+        {
+            if (!spellPrefab.TryGetComponent(out ISpell spell))
+            {
+                Debug.LogError($"Prefab '{spellPrefab.name}' is not a spell!");
+                return null;
+            }
+
+            spell = Instantiate(spellPrefab, position, Quaternion.LookRotation(direction)).GetComponent<ISpell>();
+
+            if (spell is Entity entity)
+            {
+                _spells.Add(entity);
+            }
+
+            return spell;
+        }
+    }
+}
+```
+I have also added some code that makes the `SpellFactory` register spells, and update them using `Tick`. 
+
+With `ISpellFactory`, we managed to create an abstract way to spawn instances of `Fireball` (or any other `ISpell` that we need to create in the future). Now, we can define the `Wizard`'s `CastSpell` method:
+```cs
+namespace WizardsAndGoblins.Wizards
+{
+    internal class Wizard : Entity
+    {
+        private GameObject _spellPrefab;
+        private ISpellFactory _spellFactory;
+
+        public void Setup(GameObject spellPrefab, ISpellFactory spellFactory)
+        {
+            _spellPrefab = spellPrefab;
+            _spellFactory = spellFactory;
+        }
+
+        public void CastSpell(Vector3 direction)
+        {
+            ISpell spell = _spellFactory.CreateSpell(_spellPrefab, transform.position, direction);
+            spell.Activate();
+        }
+    }
+}
+```
+Notice how the `Wizard`'s dependency with `ISpellFactory` is resolved in the `Setup` method overload. This is how the `WizardManager` does that:
+```cs
+namespace WizardsAndGoblins.Wizards
+{
+    internal class WizardManager : Manager
+    {
+        [SerializeField] private Wizard _wizardPrefab;
+        [SerializeField] private GameObject _fireballPrefab;
+
+        private ISpellFactory _spellFactory;
+        private Wizard _wizard;
+
+        public void Setup(ISpellFactory spellFactory)
+        {
+            _spellFactory = spellFactory;
+
+            CreateWizard();
+        }
+
+        public override void Tick(float deltaTime)
+        {
+            base.Tick(deltaTime);
+
+            _wizard.Tick(deltaTime);
+        }
+
+        private void CreateWizard()
+        {
+            _wizard = Instantiate(_wizardPrefab);
+            _wizard.Setup(_fireballPrefab, _spellFactory);
+        }
+    }
+}
+```
+And the `WizardManager`'s dependencies are fulfilled by the `GameplaySystem`:
+```cs
+namespace WizardsAndGoblins
+{
+    internal class GameplaySystem : System
+    {
+        protected override void SetupManagers()
+        {
+            base.SetupManagers();
+
+            SpellManager spellManager = GetManager<SpellManager>();
+
+            WizardManager wizardManager = GetManager<WizardManager>();
+            wizardManager.Setup(spellManager);
+        }
+    }
+}
+```
+And *voila! Just like magic,* the `Wizard` is able to cast a `Fireball`, without any code coupling. Now, why go through all the trouble?
+
+A great benefit of all this infrastructure is this: Notice how the `Wizard` `Entity` has no idea of **what the spell** is, or **what is does**. If we wanted to completely change what spell the `Wizard` casts, we could easily do so, without event having to open the `Wizard` class for editing. All that we needed to do was to define another spell `Entity` that had a different behaviour. A `Heal` spell, for example, could look like this:
+```cs
+namespace WizardsAndGoblins.Spells
+{
+    internal class Heal : Entity, ISpell
+    {
+        public void Activate()
+        {
+            // Finds nearby healable objects using collision, and add some value to their health
+        }
+    }
+}
+```
+And that is *✨the power of abstraction ✨*
+
+### Damaging the Goblin
+// Tbd..
