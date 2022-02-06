@@ -3,6 +3,8 @@
 Games change **a lot** during development, but code *isn't always easy to change*. Games also need *a lot of testing*, but code isn't always *easy to test*. Teams can sometimes change during development, and code *isn't always easy to understand*, especially for newcomers. With these 3 issues in mind, I've developed this *Gameplay Framework*. It's been applied successfully in a commercial project, and the team has adapted to it quite well. Since Unity doesn't have a standard gameplay framework, I hope this helps other games get built more *easily* and *responsibly*.
 
 ## Table of contents
+1. [Callbacks](#callbacks)
+1. [Rules](#rules)
 1. [Systems](#systems)
 1. [Managers](#managers)
 1. [Entities](#entities)
@@ -13,13 +15,13 @@ Games change **a lot** during development, but code *isn't always easy to change
 ## Installation:
 Install via UPM using the link: `https://github.com/GiovanniZambiasi/gameplay-framework-unity.git`
 
-## Callbacks
+# Callbacks
 
 This framework defines *custom callbacks*. This is done to avoid the inconsistencies and performance concerns of Unity's built-in *life-cycle callbacks\**. Unity callbacks should be avoided as often as possible.
 
 <a name="life-cycle-callbacks">\* *Unity's life-cycle callbacks are:* `Awake`, `Start`, `Update`/`LateUpdate`/`FixedUpdate`, and `OnDestroy`</a>
 
-### Custom callback cheat sheet
+## Custom callback cheat sheet
 
 | Keyword | Corresponding Unity Callback |
 | :---: | :---: |
@@ -27,11 +29,11 @@ This framework defines *custom callbacks*. This is done to avoid the inconsisten
 | Dispose | OnDestroy |
 | Tick | Update |
 
-### Why custom callbacks?
+## Why custom callbacks?
 
 Having manual control over the order of the *setup/update/dispose* of your classes can be **very beneficial**. This avoids race-conditions between `MonoBehaviours` (ever had a bug where some `MonoBehaviour`'s `Start` method got called before another's, and the former depended on the latter to initialize itself?). It also enables any developer in the project to understand **exactly in what order** things are happenning, without having to worry about the [Script Execution Order settings](https://docs.unity3d.com/Manual/class-MonoManager.html) hidden away in a menu. Defining custom `Tick(float deltaTime)` methods can also be extremely useful when writing [unit tests](https://docs.unity3d.com/2017.4/Documentation/Manual/testing-editortestsrunner.html).
 
-## Rules
+# Rules
 
 ### Severity guide
 Severity | Description
