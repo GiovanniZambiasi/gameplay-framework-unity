@@ -89,7 +89,7 @@ A `Manager` is the basic *building-block* of a `System`. The main difference bet
 
 Rule | [Severity](#severity-guide)
 :--- | :---:
-**Communication between `Manager`s must always be abstracted** | 🟥
+**Communication between `Manager`s must always be abstracted (a `Manager` shouldn't have any knowledge about another `Manager`)** | 🟥
 `Manager`s must define their own [`namespaces`]\*| 🟥
 `Manager`s **must not implement any [*life-cycle related*](#life-cycle-callbacks)** Unity callbacks | 🟥
 Each `Manager`s must live in it's own `GameObject`, and must be a [first-level-child](#managers-hierarchy) of a `System` | 🟥
@@ -115,6 +115,56 @@ public class MenuSystem : System
     }
 }
 ```
+# Entities
+Entities are the individual objects that make up your gameplay. A `Zombie`, the `Player` or a `WoodenBox` could all be considered entities. Most games organize their entities into `Prefabs`, and these objects can be spawned at runtime, or be dragged into a scene beforehand. They can have various `Component`s, such as a `Rigidbody`, `HealthComponent` or an `Animator`. However, every `Entity` must be defined as it's own `MonoBehaviour`:
+```cs
+public class Wizard : Entity
+{
+    // Magic...
+}
+```
+
+## Rules
+Rule | [Severity](#severity-guide)
+:--- | :---:
+Entities cannot live in the root `namespace` of an assembly | 🟥
+Entities **must not implement any [*life-cycle related*](#life-cycle-callbacks)** Unity callbacks | 🟥
+Each `Entity` must live in it's own `GameObject` | 🟥
+**Communication between different entities must always be abstracted** (an `Entity` shouldn't have any knowledge about another `Entity`) | 🟥
+Each `Entity` must have a corresponding `Manager`\* | 🟨
+
+*\* There could be some cases where a `System` is simple enough that it can manage entities by itself*
+
+## What about composition?
+Composition should always be strived for. However, in some cases, we need a "central point" for our game's entities to orchestrate *complex interactions* between `Component`s. For example: Say you had a `HealthComponent` and a `MovementComponent`. You want to reduce your `Player`'s movement speed when their health drops below 50%. To achieve this, you need some sort of communication between those two components. That's where the `Player` `Entity` comes in:
+```cs
+public class Player : Entity
+{
+    private HealthComponent _health;
+    private MovementComponent _movement;
+
+    public override void Setup()
+    {
+        base.Setup();
+
+        _health.OnDamageTaken += HandleDamageTaken;
+    }
+
+    private void HandleDamageTaken()
+    {
+        if (_health.HealthRatio <= .5f)
+        {
+            _movement.Speed *= .66f;
+        }
+    }
+}
+```
+It's a central point of communication between the two. That way, your `HealthComponent` only needs to wory about damage and health, and your `MovementComponent` only needs to worry about translation an physics. 
+
+With good abstraction, you *could* achieve this "slow-down-when-almost-dying" behaviour **without the need for a `Player`**. If your code is modular enough that it doesn't need the `Entity` to be defined in code, there's no need to define one. `Entities` will be most useful for objects that have a high number of `Component`s, all performing complex interactions with one another.
+
+## So how does a Wizard cast a Fireball?
+Later in this document, there's an [example](#wizards-and-goblins) of how to implement a `Wizard` that can cast `Fireballs` at `Goblins` following all the rules of this framework.
 
 # Abstraction
 As mentioned before: *abstraction is important* and, in most cases, *should be encouraged*. It enables developers to write clean, encapsulated code that is easily **understood, managed and tested.** However, as important as it may be, abstraction can also be quite complicated to apply consistently.
@@ -147,3 +197,17 @@ There are many ways of achieving abstraction, but here are some examples involvi
 *For a more in-depth look, open the Abstraction with Interface example in this repository*
 
 - Using some sort of event bus, to achieve complete abstraction between an event's *sender* and *listener*. [Here's](https://www.youtube.com/watch?v=WLDgtRNK2VE) a good example of how to implement one
+
+# Examples
+
+## Wizards and Goblins
+Our goal in this chapter is to make a `Wizard` that can cast a `Fireball` at a `Goblin`. This should provide a good understanding of how the framework is meant to be used.
+
+### First things first
+This example requires 3 `Entities` with corresponding `Manager`s (and therefore, 3 nested namespaces):  
+![image](https://user-images.githubusercontent.com/46461122/152685659-967cbe6e-41d0-4ed8-9ec9-218fc611a48b.png)  
+*Consider each folder in the example a C# `namespace`*
+
+Now, the `Wizard` needs to be able to cast a `Fireball`, but they're in separate namespaces
+
+
