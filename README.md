@@ -228,7 +228,7 @@ namespace DogsAndBillboards.Dogs
 In this case `DogAnimations` is still a component, but it's managed by an `Entity`.
 
 # Abstraction
-As mentioned before: *abstraction is important* and, in most cases, *should be encouraged*. It enables developers to write clean, encapsulated code that is easily **changed, tasted and understood.** However, as important as it may be, abstraction can also be quite complicated to apply consistently.
+As mentioned before: *abstraction is important* and, in most cases, *should be encouraged*. It enables developers to write clean, encapsulated code that is easily **changed, tasted and understood.** However, as important as it may be, abstraction can be quite complicated to apply consistently.
 
 ## When do I use abstraction?
 Provided you've followed all the rules from the chapters above, you can use `namespaces` to define boundary lines in your `Systems`. This will help the team identify *where* abstraction should be applied. A good, simple rule you can follow when it comes to abstraction is this:
