@@ -60,6 +60,8 @@ _Project/
             '-WizardsAndGoblins.Editor.asmdef
         '-WizardsAndGoblins.Gameplay/
             '-WizardsAndGoblins.Gameplay.asmdef
+        '-WizardsAndGoblins.Gameplay.Editor/
+            '-WizardsAndGoblins.Gameplay.Editor.asmdef
     // etc..
 ```
 
@@ -148,7 +150,7 @@ Make all your `Entities` [`internal`](https://docs.microsoft.com/pt-br/dotnet/cs
 *\*\*For unit testing purposes, you can use the `InternalsVisibleTo` attribute to give your test assemblies access to your `Entity`**
 
 ## What about composition?
-Composition should always be strived for. However, in some cases, we need a "central point" for our game's entities to orchestrate *complex interactions* between `Component`s. For example: Say you had a `HealthComponent` and a `MovementComponent`. You want to reduce your `Player`'s movement speed when their health drops below 50%. To achieve this, you need some sort of communication between those two components. That's where the `Player` `Entity` comes in:
+Composition should always be strived for. However, in some cases, we need a "central point" for our game's entities to orchestrate *complex interactions* between `Components`. For example: Say you had a `HealthComponent` and a `MovementComponent`. You want to reduce your `Player`'s movement speed when their health drops below 50%. To achieve this, you need some sort of communication between those two components. That's where the `Player` `Entity` comes in:
 ```cs
 public class Player : Entity
 {
@@ -171,7 +173,7 @@ public class Player : Entity
     }
 }
 ```
-It's a central point of communication between the two. That way, your `HealthComponent` only needs to wory about damage and health, and your `MovementComponent` only needs to worry about translation an physics. 
+It's a central point of communication between the two. That way, your `HealthComponent` only needs to worry about damage and health, and your `MovementComponent` only needs to worry about translation an physics. 
 
 With good abstraction, you *could* achieve this "slow-down-when-almost-dying" behaviour **without the need for a `Player`**. If your code is modular enough that it doesn't need the `Entity` to be defined in code, there's no need to define one. `Entities` will be most useful for objects that have a high number of `Components`, all performing complex interactions with one another.
 
@@ -181,6 +183,12 @@ Later in this document, there's an [example](#wizards-and-goblins) of how to imp
 # Components
 Components are tiny, autonomous, encapsulated slices of behaviour that live inside your `Systems`, `Managers` or `Entities`. In fact, any `MonoBehaviour` *is considered* a component by the engine. This doesn't mean that all `MonoBehaviours` you create are components *from a conceptual standpoint*. `Systems`, `Managers` or `Entities`, for example, are *not* components. Most components are modular by nature. Some are so modular that they can just be added into an object and they'll work, without any need for external help. This is a **great resource**, and it should be leveraged extensively. Since we want to preserve the modular and autonomous nature of *most* components, they **can** implement [Unity's life-cycle callbacks](#life-cycle-callbacks).
 
+## Rules
+Rule | [Severity](#severity-guide)
+:--- | :---:
+Add the `Component` suffix to all your components | 🟨
+
+## Creating a Component
 To create a component, simply make a `MonoBehaviour` how you usually would. A great example of a modular component is the `Rigidbody`. You can just add it to any object and they'll fall downwards (or upwards), depending on your gravity settings. If you want your components to be managed by their owning object, you can do so. It's up to the developer to decide whether the component is in fact autonomous or not:
 
 Take a `BillboardComponent`, for example. It can simply point a transform towards the main camera on `Update`. This is a component that *can* be autonomous:
@@ -433,7 +441,7 @@ namespace WizardsAndGoblins
 ```
 And *voila! Just like magic,* the `Wizard` is able to cast a `Fireball`, without any code coupling. Now, why go through all the trouble?
 
-A great benefit of all this infrastructure is this: Notice how the `Wizard` `Entity` has no idea of **what the spell is**, or **what it does**. If we wanted to completely change what spell the `Wizard` casts, we could easily do so, without event having to open the `Wizard`'s script for editing. All that we would need to do is to define another `ISpell` `Entity` with a different behaviour. A `Heal` spell, for example, could look like this:
+A great benefit of all this infrastructure is this: Notice how the `Wizard` `Entity` has no idea of **what the spell is**, or **what it does**. If we wanted to completely change what spell the `Wizard` casts, we could easily do so, without even having to open the `Wizard`'s script for editing. All that we would need to do is define another `ISpell` `Entity` with a different behaviour. A `Heal` spell, for example, could look like this:
 ```cs
 namespace WizardsAndGoblins.Spells
 {
