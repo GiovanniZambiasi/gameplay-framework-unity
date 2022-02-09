@@ -14,12 +14,12 @@ Games change **a lot** during development, but code *isn't always easy to change
 
 ## Installation:
 
+### OpenUPM
+[![openupm](https://img.shields.io/npm/v/com.middlemast.gameplayframework?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.middlemast.gameplayframework/)
+
 ### [UPM - Git URL](https://docs.unity3d.com/Manual/upm-ui-giturl.html)
 1. Install the core dependency first using the link: `https://github.com/GiovanniZambiasi/middlemast-core.git`
 1. Then, install this package: `https://github.com/GiovanniZambiasi/gameplay-framework-unity.git`
-
-### OpenUPM
-// Coming soon..
 
 # Callbacks
 
