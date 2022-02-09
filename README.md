@@ -286,7 +286,7 @@ This example requires 3 `Entities` with corresponding `Manager`s (and therefore,
 *Consider each folder in the example a C# `namespace`*
 
 ### Casting a fireball
-Now, the `Wizard` needs to be able to cast a `Fireball`, but they're in separate namespaces. Simply including the `using WizardsAndGoblins.Spells` directive in any of the `Wizard`'s scripts would be a violation of the [rule of abstraction](#rules-3). This is where abstraction comes into play:
+Now, the `Wizard` needs to be able to cast a `Fireball`, but they're in separate namespaces. Simply including the `using WizardsAndGoblins.Spells` directive in any of the `Wizard`'s scripts would be a violation of the [namespaces rule](#when-do-i-use-abstraction). This is where abstraction comes into play:
 
 We need to define a communication layer between `Wizards` and their `Spells`. For that, we will declare an interface:
 ```cs
