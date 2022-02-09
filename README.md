@@ -18,6 +18,9 @@ Games change **a lot** during development, but code *isn't always easy to change
 1. Install the core dependency first using the link: `https://github.com/GiovanniZambiasi/middlemast-core.git`
 1. Then, install this package: `https://github.com/GiovanniZambiasi/gameplay-framework-unity.git`
 
+### OpenUPM
+// Coming soon..
+
 # Callbacks
 
 This framework defines *custom callbacks*. This is done to avoid the inconsistencies and performance concerns of Unity's built-in *life-cycle callbacks\**. Unity callbacks should be avoided as often as possible.
