@@ -319,7 +319,7 @@ namespace WizardsAndGoblins
 {
     public interface ISpellFactory
     {
-        ISpell CreateSpell(GameObject spellPrefab, Vector3 position, Vector3 direction);
+        ISpell CreateSpell(Vector3 position, Vector3 direction);
     }
 }
 ```
@@ -329,6 +329,8 @@ namespace WizardsAndGoblins.Spells
 {
     internal class SpellManager : Manager, ISpellFactory
     {
+        [SerializeField] private GameObject _spellPrefab;
+    
         private List<Entity> _spells = new List<Entity>();
 
         public override void Tick(float deltaTime)
@@ -344,13 +346,13 @@ namespace WizardsAndGoblins.Spells
 
         public ISpell CreateSpell(GameObject spellPrefab, Vector3 position, Vector3 direction)
         {
-            if (!spellPrefab.TryGetComponent(out ISpell spell))
+            if (!_spellPrefab.TryGetComponent(out ISpell spell))
             {
-                Debug.LogError($"Prefab '{spellPrefab.name}' is not a spell!");
+                Debug.LogError($"Prefab '{_spellPrefab.name}' is not a spell!");
                 return null;
             }
 
-            spell = Instantiate(spellPrefab, position, Quaternion.LookRotation(direction)).GetComponent<ISpell>();
+            spell = Instantiate(_spellPrefab, position, Quaternion.LookRotation(direction)).GetComponent<ISpell>();
 
             if (spell is Entity entity)
             {
@@ -370,18 +372,16 @@ namespace WizardsAndGoblins.Wizards
 {
     internal class Wizard : Entity
     {
-        private GameObject _spellPrefab;
         private ISpellFactory _spellFactory;
 
-        public void Setup(GameObject spellPrefab, ISpellFactory spellFactory)
+        public void Setup(ISpellFactory spellFactory)
         {
-            _spellPrefab = spellPrefab;
             _spellFactory = spellFactory;
         }
 
         public void CastSpell(Vector3 direction)
         {
-            ISpell spell = _spellFactory.CreateSpell(_spellPrefab, transform.position, direction);
+            ISpell spell = _spellFactory.CreateSpell(transform.position, direction);
             spell.Activate();
         }
     }
@@ -394,7 +394,6 @@ namespace WizardsAndGoblins.Wizards
     internal class WizardManager : Manager
     {
         [SerializeField] private Wizard _wizardPrefab;
-        [SerializeField] private GameObject _fireballPrefab;
 
         private ISpellFactory _spellFactory;
         private Wizard _wizard;
@@ -416,7 +415,7 @@ namespace WizardsAndGoblins.Wizards
         private void CreateWizard()
         {
             _wizard = Instantiate(_wizardPrefab);
-            _wizard.Setup(_fireballPrefab, _spellFactory);
+            _wizard.Setup(_spellFactory);
         }
     }
 }
