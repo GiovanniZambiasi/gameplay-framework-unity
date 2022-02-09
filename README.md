@@ -13,7 +13,10 @@ Games change **a lot** during development, but code *isn't always easy to change
 1. [Examples](#examples)
 
 ## Installation:
-Install via UPM using the link: `https://github.com/GiovanniZambiasi/gameplay-framework-unity.git`
+
+### UPM - Git URL:
+1. Install the core dependency first using the link: `https://github.com/GiovanniZambiasi/middlemast-core.git`
+1. Then, install this package: `https://github.com/GiovanniZambiasi/gameplay-framework-unity.git`
 
 # Callbacks
 
