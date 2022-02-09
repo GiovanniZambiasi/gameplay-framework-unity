@@ -1,8 +1,5 @@
-using Codice.Client.BaseCommands;
-using System;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace MiddleMast.GameplayFramework.Editor
 {
@@ -25,8 +22,7 @@ namespace MiddleMast.GameplayFramework.Editor
                 RefreshManagers();
             }
 
-            DrawSettings();
-            DrawManagers();
+            DrawDefaultInspector();
         }
 
         private void Setup()
@@ -34,25 +30,6 @@ namespace MiddleMast.GameplayFramework.Editor
             _system = target as System;
             _managers = serializedObject.FindProperty(nameof(_managers));
             _setupTiming = serializedObject.FindProperty(nameof(_setupTiming));
-        }
-
-        private void DrawSettings()
-        {
-            serializedObject.Update();
-            EditorGUILayout.PropertyField(_setupTiming);
-            serializedObject.ApplyModifiedProperties();
-        }
-
-        private void DrawManagers()
-        {
-            if (_managers.arraySize == 0)
-            {
-                return;
-            }
-
-            GUI.enabled = false;
-            EditorGUILayout.PropertyField(_managers);
-            GUI.enabled = true;
         }
 
         private void OnValidate()

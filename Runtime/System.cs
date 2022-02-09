@@ -1,3 +1,4 @@
+using MiddleMast.Attributes;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ namespace MiddleMast.GameplayFramework
         }
 
         [SerializeField] private SetupTiming _setupTiming = SetupTiming.Start;
-        [SerializeField] private List<Manager> _managers = new List<Manager>();
+        [SerializeField][ReadOnly] private List<Manager> _managers = new List<Manager>();
 
         public TManager GetManager<TManager>()
         {

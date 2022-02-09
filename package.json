@@ -4,6 +4,9 @@
   "displayName": "Gio's Gameplay Framework",
   "description": "A solid framework for gameplay architecture.",
   "unity": "2019.1",
+  "dependencies": {
+    "com.middlemast.core":"1.0.0"
+  },
   "keywords": [
     "Gameplay",
     "Framework",

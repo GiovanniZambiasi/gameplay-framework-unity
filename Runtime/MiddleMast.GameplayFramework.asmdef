@@ -1,7 +1,9 @@
 {
     "name": "MiddleMast.GameplayFramework",
     "rootNamespace": "MiddleMast.GameplayFramework",
-    "references": [],
+    "references": [
+        "GUID:96c71b57c71bf934b939f6643c34587f"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
