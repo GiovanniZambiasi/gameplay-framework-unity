@@ -372,7 +372,7 @@ namespace WizardsAndGoblins.Spells
 ```
 I have also added some code that makes the `SpellManager` register spells, and update them using `Tick`. 
 
-With `ISpellFactory`, we managed to create an abstract way to spawn instances of `Fireball` (or any other `ISpell` that we need to create in the future). Now, we can define the `Wizard`'s `CastSpell` method:
+With `ISpellFactory`, we managed to create an abstract way to spawn instances of `Fireball`. Now, we can define the `Wizard`'s `CastSpell` method:
 ```cs
 namespace WizardsAndGoblins.Wizards
 {
@@ -393,7 +393,7 @@ namespace WizardsAndGoblins.Wizards
     }
 }
 ```
-Notice how the `Wizard`'s dependency with `ISpellFactory` is resolved in the `Setup` method overload. This is how the `WizardManager` does that:
+Notice how the `Wizard`'s dependency to `ISpellFactory` is fulfilled in the `Setup` method overload. This is how the `WizardManager` does that:
 ```cs
 namespace WizardsAndGoblins.Wizards
 {
@@ -459,7 +459,7 @@ namespace WizardsAndGoblins.Spells
     }
 }
 ```
-And that is *✨the power of abstraction ✨*
+Also, notice how neither the `Wizard` nor the `WizardManager` know how a spell is *created, managed or destroyed*. This gives us the flexibility of using whichever infrastructure we need for `ISpell`. For example, if we had to use a pre built spell plugin from the asset store, we could define `ISpell` and `ISpellFactory` implementations to communicate with it, and the rest of our codebase wouldn't even know. That is *✨the power of abstraction ✨*
 
 ### Damaging the Goblin
 // Tbd..
