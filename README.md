@@ -51,10 +51,10 @@ Severity | Description
 ### General rules
 Rule | [Severity](#severity-guide)
 :--- | :---:
+Keep the root namespace of an assembly the same as the assembly name | 🟥
+The `namespaces` in your scripts must match your folder structure, taking the root namespace of the assembly into consideration | 🟥
 All of your project's scripts must live under the same root folder | 🟨
 All assemblies must live inside their own folder. And that folder must live in the root of your scripts folder. **You cannot have assemblies inside other assemblies**\* | 🟨
-Keep the root namespace of an assembly the same as the assembly name | 🟨
-The `namespaces` in your scripts must match your folder structure, taking the root namespace of the assembly into consideration | 🟨
 
 *\* Example:*
 ```
@@ -179,7 +179,7 @@ public class Player : Entity
     }
 }
 ```
-It's a central point of communication between the two. That way, your `HealthComponent` only needs to worry about damage and health, and your `MovementComponent` only needs to worry about translation an physics. 
+It's a central point of communication between the two. That way, your `HealthComponent` only needs to worry about damage and health, and your `MovementComponent` only needs to worry about translation and physics. 
 
 With good abstraction, you *could* achieve this "slow-down-when-almost-dying" behaviour **without the need for a `Player`**. If your code is modular enough that it doesn't need the `Entity` to be defined in code, there's no need to define one. `Entities` will be most useful for objects that have a high number of `Components`, all performing complex interactions with one another.
 
@@ -192,7 +192,7 @@ Components are tiny, autonomous, encapsulated slices of behaviour that live insi
 ## Rules
 Rule | [Severity](#severity-guide)
 :--- | :---:
-Add the `Component` suffix to all your components | 🟨
+Add the `Component` suffix to all your components | 🟩
 
 ## Creating a Component
 To create a component, simply make a `MonoBehaviour` how you usually would. A great example of a modular component is the `Rigidbody`. You can just add it to any object and they'll fall downwards (or upwards), depending on your gravity settings. If you want your components to be managed by their owning object, you can do so. It's up to the developer to decide whether the component is in fact autonomous or not:
@@ -245,26 +245,26 @@ namespace DogsAndBillboards.Dogs
 In this case `DogAnimations` is still a component, but it's managed by an `Entity`.
 
 # Abstraction
-As mentioned before: *abstraction is important* and, in most cases, *should be encouraged*. It enables developers to write clean, encapsulated code that is easily **changed, tasted and understood.** However, as important as it may be, abstraction can be quite complicated to apply consistently.
+Abstraction *is very important*. It's an integral part of writing clean code, and it's all about defining *how much `types` should know about each other*. The less they know, the more decoupled your codebase gets. Decoupling is very useful, as it enables developers to write clean, encapsulated code that is easily **changed, tested and understood.** Thus, in most cases, abstraction *should be encouraged*. However, as important as it may be, abstraction can be quite complicated to apply consistently.
 
 ## When do I use abstraction?
-Provided you've followed all the rules from the chapters above, you can use `namespaces` to define boundary lines in your `Systems`. This will help the team identify *where* abstraction should be applied. A good, simple rule you can follow when it comes to abstraction is this:
+The rules from the previous chapters were crafted to answer this question. This framework defines `namespaces` as *layers of abstraction*. The idea is that each `namespace` defines a *system boundary*. Whenever you need to have communication between two separate `namespaces`, abstraction should be applied. This boils down to a simple rule, that entire teams can easily follow:
 
-- **Types should only know about other types in their own `namespace`s** 🟥
+- **A `Type` can only know about another `Type` if they're in the same `namespace`** 🟥
+    - This applies hierarchically, so nested `namespaces` *can know about* `Types` in their parent `namespace`
+    - This doesn't mean that you shouldn't use abstraction within a particular `namespace`. It can, and should, be considered
 
-This doesn't mean that you shouldn't use abstraction within a particular `namespace`. It can, and should, be considered. However, the above quote should be followed *as a rule*. Here's an example:
+So, following all the above rules will apply abstraction into your codebase *very consistently*. Here's an example:
 
 ![Abstraction map](https://user-images.githubusercontent.com/46461122/152663172-970889fc-f20d-4f28-bf84-33a00ca6ffa9.png)
 
-In the image above, the dotted lines represent a map of *who knows whom*. Notice how all the lines coming from the inner namespace `TheAncientScrolls.Dragons` have arrows, symbolizing that they only go one way. In the root ``namespace``, there are 3 types: `AttributeSet`, `IInteractable`, `ICatchFire`. They can all know about each other, as they're in the same `namespace`. However, they **can't know about** any types inside `TheAncientScrolls.Dragons`. On the other hand, `TheAncientScrolls.Dragons` is still a part of `TheAncientScrolls` `namespace`. Therefore, all types inside `TheAncientScrolls.Dragons` **can know about** any types in `TheAncientScrolls`.
-
-This guideline, in combination with the namespace and assembliy rules from the previous chapters, should make for a very organized and well abstracted codebase.
+In the image above, the dotted lines represent a map of *who knows whom*. Notice how all the lines coming from the nested namespace (`TheAncientScrolls.Dragons`) have arrows, symbolizing that they only go one way. In the parent namespace (`TheAncientScrolls`), there are 3 types: `AttributeSet`, `IInteractable`, `ICatchFire`. They can all know about each other, as they're in the same `namespace`. However, they **can't know about** any types inside `TheAncientScrolls.Dragons`. On the other hand, `TheAncientScrolls.Dragons` is still a part of `TheAncientScrolls`. Therefore, types inside `TheAncientScrolls.Dragons` **can know about** types in `TheAncientScrolls`.
 
 ## So who can go in the root `namespace`?
-The root `namespace` of an assembly should be reserved mosttly to interfaces, shared data objects, extension methods and some components. **No `Entity` or `Manager`** should be in the root `namespace` of an assembly.
+The root `namespace` of an assembly should be reserved mostly to interfaces, shared data objects, extension methods and some components. **No `Entity` or `Manager`** should be in the root `namespace` of an assembly.
 
 ## How do I abstract?
-There are many ways of achieving abstraction, but here are some examples involving `Managee`s and a `System`:
+There are many ways of achieving abstraction, but here are some examples involving `Managers` and a `System`:
 - Using [C# events](https://docs.microsoft.com/en-us/dotnet/standard/events/):
   - A `Manager` could declare a specific `event` for when something happens. The `System` could subscribe to this event, and pass the callback along to another `Manager`  
 ![Abstraction with CSharp Events](https://user-images.githubusercontent.com/46461122/152659476-24bb47ae-e87f-48e6-ba9b-e5bf1312619b.png)
@@ -350,7 +350,7 @@ namespace WizardsAndGoblins.Spells
             }
         }
 
-        public ISpell CreateSpell(GameObject spellPrefab, Vector3 position, Vector3 direction)
+        public ISpell CreateSpell(Vector3 position, Vector3 direction)
         {
             if (!_spellPrefab.TryGetComponent(out ISpell spell))
             {
