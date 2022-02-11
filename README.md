@@ -248,7 +248,7 @@ In this case `DogAnimations` is still a component, but it's managed by an `Entit
 Abstraction *is very important*. It's an integral part of writing clean code, and it's all about defining *how much `types` should know about each other*. The less they know, the more decoupled your codebase gets. Decoupling is very useful, as it enables developers to write clean, encapsulated code that is easily **changed, tested and understood.** Thus, in most cases, abstraction *should be encouraged*. However, as important as it may be, abstraction can be quite complicated to apply consistently.
 
 ## When do I use abstraction?
-The rules from the previous chapters were crafted to answer this question. This framework defines `namespaces` as *layers of abstraction*. The idea is that each `namespace` defines a *system boundary*. Whenever you need to have communication between two separate `namespaces`, abstraction should be applied. This boils down to a simple rule, that entire teams can easily follow:
+The rules from the previous chapters were crafted to answer this question. This framework defines `namespaces` as *layers of abstraction*. The idea is that each `namespace` defines a *system boundary*. Whenever you need to have communication between two separate `namespaces`, abstraction should be applied. This boils down to a simple rule, that can be easily followed:
 
 - **A `Type` can only know about another `Type` if they're in the same `namespace`** 🟥
     - This applies hierarchically, so nested `namespaces` *can know about* `Types` in their parent `namespace`
