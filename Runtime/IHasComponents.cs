@@ -3,7 +3,7 @@
 namespace MiddleMast.GameplayFramework
 {
     /// <summary>
-    /// Useful interface to access <see cref="MonoBehaviour"/>'s GetComponent methods
+    /// Useful interface to access <see cref="MonoBehaviour"/>'s GetComponent methods without needing a reference to a concrete type
     /// </summary>
     public interface IHasComponents
     {
