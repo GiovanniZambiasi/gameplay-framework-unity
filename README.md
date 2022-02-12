@@ -56,16 +56,22 @@ The `namespaces` in your scripts must match your folder structure, taking the ro
 All of your project's scripts must live under the same root folder | 🟨
 All assemblies must live inside their own folder. And that folder must live in the root of your scripts folder. **You cannot have assemblies inside other assemblies**\* | 🟨
 
-*\* Example:*
+*\* Here's an example of an ideal assembly setup:*
 ```
 _Project/
     '-Scripts/
         '-WizardsAndGoblins/
             '-WizardsAndGoblins.asmdef
+        '-WizardsAndGoblins.Tests/
+            '-WizardsAndGoblins.Tests.asmdef
         '-WizardsAndGoblins.Editor/
             '-WizardsAndGoblins.Editor.asmdef
+        '-WizardsAndGoblins.Editor.Tests/
+            '-WizardsAndGoblins.Editor.Tests.asmdef
         '-WizardsAndGoblins.Gameplay/
             '-WizardsAndGoblins.Gameplay.asmdef
+        '-WizardsAndGoblins.Gameplay.Test/
+            '-WizardsAndGoblins.Gameplay.Test.asmdef
         '-WizardsAndGoblins.Gameplay.Editor/
             '-WizardsAndGoblins.Gameplay.Editor.asmdef
     // etc..
