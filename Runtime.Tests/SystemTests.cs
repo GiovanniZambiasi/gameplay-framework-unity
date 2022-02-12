@@ -1,7 +1,10 @@
 using NUnit.Framework;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace MiddleMast.GameplayFramework.Tests
 {
@@ -126,6 +129,42 @@ namespace MiddleMast.GameplayFramework.Tests
             system.UnRegisterManager(manager);
 
             Assert.IsFalse(system.HasManager(manager));
+        }
+
+        [Test]
+        public void SetupsUpDuringAwake()
+        {
+            HumbleSystem system = SystemTestUtilities.CreateSystem<HumbleSystem>(Array.Empty<Type>(), System.SetupTimings.Awake);
+
+            Assert.IsTrue(system.IsSetup);
+        }
+
+        [UnityTest]
+        public IEnumerator SetupsUpDuringStart()
+        {
+            HumbleSystem system = SystemTestUtilities.CreateSystem<HumbleSystem>(Array.Empty<Type>(), System.SetupTimings.Start);
+
+            Assert.IsFalse(system.IsSetup);
+
+            yield return new WaitForEndOfFrame();
+
+            Assert.IsTrue(system.IsSetup);
+        }
+
+        [UnityTest]
+        public IEnumerator SetsUpWithCustom()
+        {
+            HumbleSystem system = SystemTestUtilities.CreateSystem<HumbleSystem>(Array.Empty<Type>(), System.SetupTimings.Custom);
+
+            Assert.IsFalse(system.IsSetup);
+
+            yield return null;
+
+            Assert.IsFalse(system.IsSetup);
+
+            system.Setup();
+
+            Assert.IsTrue(system.IsSetup);
         }
     }
 }

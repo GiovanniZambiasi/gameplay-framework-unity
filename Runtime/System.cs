@@ -7,15 +7,21 @@ namespace MiddleMast.GameplayFramework
     [DisallowMultipleComponent]
     public abstract class System : MonoBehaviour
     {
-        private enum SetupTiming
+        public enum SetupTimings
         {
             Awake,
             Start,
             Custom,
         }
 
-        [SerializeField] private SetupTiming _setupTiming = SetupTiming.Start;
+        [SerializeField] private SetupTimings _setupTiming = SetupTimings.Start;
         [SerializeField] private List<Manager> _managers = new List<Manager>();
+
+        public SetupTimings SetupTiming
+        {
+            get => _setupTiming;
+            set => _setupTiming = value;
+        }
 
         public TManager GetManager<TManager>()
         {
@@ -96,7 +102,7 @@ namespace MiddleMast.GameplayFramework
 
         private void Start()
         {
-            if (_setupTiming == SetupTiming.Start)
+            if (_setupTiming == SetupTimings.Start)
             {
                 Setup();
             }
@@ -104,7 +110,7 @@ namespace MiddleMast.GameplayFramework
 
         private void Awake()
         {
-            if (_setupTiming == SetupTiming.Awake)
+            if (_setupTiming == SetupTimings.Awake)
             {
                 Setup();
             }

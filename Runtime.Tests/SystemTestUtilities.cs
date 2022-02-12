@@ -5,12 +5,33 @@ namespace MiddleMast.GameplayFramework.Tests
 {
     public static class SystemTestUtilities
     {
-        public static TSystem CreateSystem<TSystem>(Type[] managers) where TSystem : System
+        private static GameObject _systemModelObject;
+
+        private static GameObject SystemModelObject
         {
-            GameObject systemGameObject = new GameObject($"{nameof(TSystem)}", typeof(TSystem));
-            TSystem system = systemGameObject.GetComponent<TSystem>();
+            get
+            {
+                if (_systemModelObject == null)
+                {
+                    _systemModelObject = new GameObject("ModelObject");
+                    _systemModelObject.SetActive(false);
+                }
+
+                return _systemModelObject;
+            }
+        }
+
+        public static TSystem CreateSystem<TSystem>(Type[] managers, System.SetupTimings setupTiming = System.SetupTimings.Custom) where TSystem : System
+        {
+            GameObject systemGameObject = UnityEngine.Object.Instantiate(SystemModelObject);
+            systemGameObject.name = nameof(TSystem);
+
+            TSystem system = systemGameObject.AddComponent<TSystem>();
+            system.SetupTiming = setupTiming;
 
             CreateAndRegisterManagers(system, managers);
+
+            systemGameObject.SetActive(true);
 
             return system;
         }
