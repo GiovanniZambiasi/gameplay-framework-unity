@@ -1,5 +1,5 @@
-using MiddleMast.Attributes;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace MiddleMast.GameplayFramework
@@ -15,7 +15,7 @@ namespace MiddleMast.GameplayFramework
         }
 
         [SerializeField] private SetupTiming _setupTiming = SetupTiming.Start;
-        [SerializeField][ReadOnly] private List<Manager> _managers = new List<Manager>();
+        [SerializeField] private List<Manager> _managers = new List<Manager>();
 
         public TManager GetManager<TManager>()
         {
@@ -30,6 +30,26 @@ namespace MiddleMast.GameplayFramework
             }
 
             return default;
+        }
+
+        public bool HasManager<TManager>()
+        {
+            return _managers.Any(m=> m is TManager);
+        }
+
+        public bool HasManager(Manager manager)
+        {
+            return _managers.Contains(manager);
+        }
+
+        public void RegisterManager(Manager manager)
+        {
+            _managers.Add(manager);
+        }
+
+        public void UnRegisterManager(Manager manager)
+        {
+            _managers.Remove(manager);
         }
 
         public virtual void Setup()

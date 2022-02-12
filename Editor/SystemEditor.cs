@@ -1,5 +1,4 @@
 using UnityEditor;
-using UnityEngine;
 
 namespace MiddleMast.GameplayFramework.Editor
 {
@@ -7,8 +6,12 @@ namespace MiddleMast.GameplayFramework.Editor
     public class SystemEditor : UnityEditor.Editor
     {
         private System _system;
-        private SerializedProperty _managers;
         private SerializedProperty _setupTiming;
+        private SystemManagersEditor _managersEditor;
+
+        public SystemManagersEditor ManagersEditor => _managersEditor;
+
+        private bool IsSetup => _system != null && _setupTiming != null;
 
         private void Awake()
         {
@@ -17,45 +20,24 @@ namespace MiddleMast.GameplayFramework.Editor
 
         public override void OnInspectorGUI()
         {
-            if (!Application.isPlaying)
+            if (!IsSetup)
             {
-                RefreshManagers();
+                Setup();
             }
 
             DrawDefaultInspector();
+
+            _managersEditor.Draw();
         }
 
         private void Setup()
         {
             _system = target as System;
-            _managers = serializedObject.FindProperty(nameof(_managers));
+
+            SerializedProperty managers = serializedObject.FindProperty("_managers");
+            _managersEditor = new SystemManagersEditor(serializedObject, managers);
+
             _setupTiming = serializedObject.FindProperty(nameof(_setupTiming));
-        }
-
-        private void OnValidate()
-        {
-            RefreshManagers();
-        }
-
-        private void RefreshManagers()
-        {
-            Transform systemTransform = _system.transform;
-
-            _managers.ClearArray();
-
-            for (int i = 0; i < systemTransform.childCount; i++)
-            {
-                Transform child = systemTransform.GetChild(i);
-
-                if (child.TryGetComponent(out Manager manager))
-                {
-                    _managers.arraySize++;
-                    SerializedProperty arrayElement = _managers.GetArrayElementAtIndex(i);
-                    arrayElement.objectReferenceValue = manager;
-                }
-            }
-
-            serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
     }
 }
