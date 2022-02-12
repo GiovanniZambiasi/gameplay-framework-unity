@@ -9,7 +9,7 @@ package Market.Basket
 {
 class BasketManager
 }
-package Marker.Clients
+package Market.Clients
 {
 class ClientManager
 }

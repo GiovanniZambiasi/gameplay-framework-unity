@@ -7,9 +7,6 @@ namespace MiddleMast.GameplayFramework.Tests
 {
     public class SystemTests
     {
-        // Registers manager
-        // Unregisters manager
-
         [Test]
         public void SetsUpManagersInOrder()
         {
@@ -103,6 +100,32 @@ namespace MiddleMast.GameplayFramework.Tests
             system.Tick(.5f);
 
             Assert.IsTrue(tickOrder.SequenceEqual(expectedTickOrder));
+        }
+
+        [Test]
+        public void RegistersManager()
+        {
+            System system = SystemTestUtilities.CreateSystem<HumbleSystem>(Array.Empty<Type>());
+
+            Manager manager = SystemTestUtilities.CreateManager(system, typeof(HumbleManager));
+
+            system.RegisterManager(manager);
+
+            Assert.IsTrue(system.HasManager(manager));
+        }
+
+        [Test]
+        public void UnRegistersManager()
+        {
+            System system = SystemTestUtilities.CreateSystem<HumbleSystem>(new [] { typeof(HumbleManager) });
+
+            Manager manager = system.GetManager<HumbleManager>();
+
+            Assert.IsNotNull(manager);
+
+            system.UnRegisterManager(manager);
+
+            Assert.IsFalse(system.HasManager(manager));
         }
     }
 }
