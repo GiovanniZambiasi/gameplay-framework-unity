@@ -118,7 +118,7 @@ Make all your `Managers` [`internal`](https://docs.microsoft.com/pt-br/dotnet/cs
 Add the `Manager` suffix to all `Managers` (and their `GameObject`'s names should match their type names) | 🟩  
 
 *\* Example:*  
-![Anatomy of a System](https://user-images.githubusercontent.com/46461122/152659092-e5dedab5-48a6-431c-8f3b-8281e3120fa9.png)  
+![Anatomy of a System](https://user-images.githubusercontent.com/46461122/153716988-a2d6eb92-67e9-4240-bdd6-eb00f461ae6f.png)
 *In the diagram above, `Market` is the root namespace of the `System`. Each `Manager` defines it's own child-namespace, and must never reference one another*
 
 *\*\* For unit testing purposes, you can use the `InternalsVisibleTo` attribute to give your test assemblies access to your `Manager`*
