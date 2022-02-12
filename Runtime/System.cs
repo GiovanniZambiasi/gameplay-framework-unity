@@ -57,10 +57,8 @@ namespace MiddleMast.GameplayFramework
             SetupManagers();
         }
 
-        public virtual void Tick()
+        public virtual void Tick(float deltaTime)
         {
-            float deltaTime = Time.deltaTime;
-
             TickManagers(deltaTime);
         }
 
@@ -119,7 +117,7 @@ namespace MiddleMast.GameplayFramework
 
         private void Update()
         {
-            Tick();
+            Tick(Time.deltaTime);
         }
     }
 }

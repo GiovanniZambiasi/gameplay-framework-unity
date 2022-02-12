@@ -15,6 +15,11 @@ namespace MiddleMast.GameplayFramework.Tests
             return system;
         }
 
+        public static TManager CreateManager<TManager>(System system) where TManager : Manager
+        {
+            return CreateManager(system, typeof(TManager)) as TManager;
+        }
+
         public static Manager CreateManager(System system, Type type)
         {
             GameObject managerGameObject = new GameObject(type.Name, type);
