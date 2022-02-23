@@ -266,6 +266,9 @@ So, following all the above rules will apply abstraction into your codebase *ver
 
 In the image above, the dotted lines represent a map of *who knows whom*. Notice how all the lines coming from the nested namespace (`TheAncientScrolls.Dragons`) have arrows, symbolizing that they only go one way. In the parent namespace (`TheAncientScrolls`), there are 3 types: `AttributeSet`, `IInteractable`, `ICatchFire`. They can all know about each other, as they're in the same `namespace`. However, they **can't know about** any types inside `TheAncientScrolls.Dragons`. On the other hand, `TheAncientScrolls.Dragons` is still a part of `TheAncientScrolls`. Therefore, types inside `TheAncientScrolls.Dragons` **can know about** types in `TheAncientScrolls`.
 
+## Exceptions
+The `namespaces` rule will be most useful for your *runtime* scripts, where most of the buisness logic of your application will go. However, exceptions can be made for **`Editor` and `Test`** assemblies, since those namespaces are technically different than their respective types. For example, if you have a `Wizard : Entity` in a `WizardsAndGoblins.Wizards` `namespace`, an editor for it would likely be called `WizardEditor` inside a `WizardsAndGoblins.Editor.Wizards` `namespace`.
+
 ## So who can go in the root `namespace`?
 The root `namespace` of an assembly should be reserved mostly to interfaces, shared data objects, extension methods and some components. **No `Entity` or `Manager`** should be in the root `namespace` of an assembly.
 
