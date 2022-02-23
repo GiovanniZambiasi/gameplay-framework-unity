@@ -187,7 +187,7 @@ public class Player : Entity
 ```
 It's a central point of communication between the two. That way, your `HealthComponent` only needs to worry about damage and health, and your `MovementComponent` only needs to worry about translation and physics. 
 
-With good abstraction, you *could* achieve this "slow-down-when-almost-dying" behaviour **without the need for a `Player`**. If your code is modular enough that it doesn't need the `Entity` to be defined in code, there's no need to define one. `Entities` will be most useful for objects that have a high number of `Components`, all performing complex interactions with one another.
+With good abstraction, you *could* achieve this "slow-down-when-almost-dying" behaviour **without the need for a `Player`**. If your code is modular enough that it doesn't need the `Entity` to be defined in code, then don't define it. `Entities` will be most useful for objects that have a high number of `Components`, all performing complex interactions with one another.
 
 ## So how does a Wizard cast a Fireball?
 Later in this document, there's an [example](#wizards-and-goblins) of how to implement a `Wizard` that can cast `Fireballs` at `Goblins` following all the rules of this framework.
@@ -260,14 +260,16 @@ The rules from the previous chapters were crafted to answer this question. This 
     - This applies hierarchically, so nested `namespaces` *can know about* `Types` in their parent `namespace`
     - This doesn't mean that you shouldn't use abstraction within a particular `namespace`. It can, and should, be considered
 
-So, following all the above rules will apply abstraction into your codebase *very consistently*. Here's an example:
+From here on, the above rule will be referred to as **the namespaces rule**. Here's an example:
 
 ![Abstraction map](https://user-images.githubusercontent.com/46461122/152663172-970889fc-f20d-4f28-bf84-33a00ca6ffa9.png)
 
 In the image above, the dotted lines represent a map of *who knows whom*. Notice how all the lines coming from the nested namespace (`TheAncientScrolls.Dragons`) have arrows, symbolizing that they only go one way. In the parent namespace (`TheAncientScrolls`), there are 3 types: `AttributeSet`, `IInteractable`, `ICatchFire`. They can all know about each other, as they're in the same `namespace`. However, they **can't know about** any types inside `TheAncientScrolls.Dragons`. On the other hand, `TheAncientScrolls.Dragons` is still a part of `TheAncientScrolls`. Therefore, types inside `TheAncientScrolls.Dragons` **can know about** types in `TheAncientScrolls`.
 
 ## Exceptions
-The `namespaces` rule will be most useful for your *runtime* scripts, where most of the buisness logic of your application will go. However, exceptions can be made for **`Editor` and `Test`** assemblies, since those namespaces are technically different than their respective types. For example, if you have a `Wizard : Entity` in a `WizardsAndGoblins.Wizards` `namespace`, an editor for it would likely be called `WizardEditor` inside a `WizardsAndGoblins.Editor.Wizards` `namespace`.
+The `namespaces` rule will be most useful for your *runtime* scripts, where most of the buisness logic of your application will go. However, exceptions can be made for **`Editor` and `Test`** assemblies, since those namespaces are technically different than their respective types. For example, if you have a `Wizard : Entity` in a `WizardsAndGoblins.Wizards` `namespace`, an editor for it would likely be called `WizardEditor` inside a `WizardsAndGoblins.Editor.Wizards` `namespace`. In this case `WizardEditor` *needs to know* about the type in `WizardsAndGoblins.Wizards`.
+
+Another exception to the rule are `Systems`. Since they will be responsible for all `Managers` and their `Entities`, forbidding access their types could become counter-productive. However, the opposite **is not true**. No other types in an assembly can know about a `System`. If you deem it neccessary, you *can* apply abstraction between the `System` and its `Managers`. This could be useful if you want to have different `Managers` on different levels of you game, but still maintain the same `System`. For example, you could have an interface `IObjectiveManager` that has two implementations: `CaptureTheFlagManager` and `TeamDeathmatchManager`, one for each game mode. The `System` could use that interface to communicate with them, preserving abstraction between the two.
 
 ## So who can go in the root `namespace`?
 The root `namespace` of an assembly should be reserved mostly to interfaces, shared data objects, extension methods and some components. **No `Entity` or `Manager`** should be in the root `namespace` of an assembly.
