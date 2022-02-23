@@ -260,7 +260,7 @@ The rules from the previous chapters were crafted to answer this question. This 
     - This applies hierarchically, so nested `namespaces` *can know about* `Types` in their parent `namespace`
     - This doesn't mean that you shouldn't use abstraction within a particular `namespace`. It can, and should, be considered
 
-From here on, the above rule will be referred to as **the namespaces rule**. Here's an example:
+From here onwards, the above rule will be referred to as **the namespaces rule**. Combining it with the rules from the other chapters will help you apply abstraction to your codebase **very consistently**. Here's an example:
 
 ![Abstraction map](https://user-images.githubusercontent.com/46461122/152663172-970889fc-f20d-4f28-bf84-33a00ca6ffa9.png)
 
