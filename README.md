@@ -266,13 +266,13 @@ From here onwards, the above rule will be referred to as **the namespaces rule**
 
 In the image above, the dotted lines represent a map of *who knows whom*. Notice how all the lines coming from the nested namespace (`TheAncientScrolls.Dragons`) have arrows, symbolizing that they only go one way. In the parent namespace (`TheAncientScrolls`), there are 3 types: `AttributeSet`, `IInteractable`, `ICatchFire`. They can all know about each other, as they're in the same `namespace`. However, they **can't know about** any types inside `TheAncientScrolls.Dragons`. On the other hand, `TheAncientScrolls.Dragons` is still a part of `TheAncientScrolls`. Therefore, types inside `TheAncientScrolls.Dragons` **can know about** types in `TheAncientScrolls`.
 
+## So who can go in the root `namespace`?
+The root `namespace` of an assembly should be reserved mostly to interfaces, shared data objects, extension methods and some components. **No `Entity` or `Manager`** should be in the root `namespace` of an assembly.
+
 ## Exceptions
 The `namespaces` rule will be most useful for your *runtime* scripts, where most of the buisness logic of your application will go. However, exceptions can be made for **`Editor` and `Test`** assemblies, since those namespaces are technically different than their respective types. For example, if you have a `Wizard : Entity` in a `WizardsAndGoblins.Wizards` `namespace`, an editor for it would likely be called `WizardEditor` inside a `WizardsAndGoblins.Editor.Wizards` `namespace`. In this case `WizardEditor` *needs to know* about the type in `WizardsAndGoblins.Wizards`.
 
 Another exception to the rule are `Systems`. Since they will be responsible for all `Managers` and their `Entities`, forbidding access their types could become counter-productive. If you deem it neccessary, you *can* apply abstraction between the `System` and its `Managers`. This could be useful if you want to have different `Managers` on different levels of you game, but still maintain the same `System`. For example, you could have an interface `IObjectiveManager` that has two implementations: `CaptureTheFlagManager` and `TeamDeathmatchManager`, one for each game mode. The `System` could use that interface to communicate with them, preserving abstraction between the two.
-
-## So who can go in the root `namespace`?
-The root `namespace` of an assembly should be reserved mostly to interfaces, shared data objects, extension methods and some components. **No `Entity` or `Manager`** should be in the root `namespace` of an assembly.
 
 ## How do I abstract?
 There are many ways of achieving abstraction, but here are some examples involving `Managers` and a `System`:
