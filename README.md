@@ -118,7 +118,7 @@ Make all your `Managers` [`internal`](https://docs.microsoft.com/pt-br/dotnet/cs
 Add the `Manager` suffix to all `Managers` (and their `GameObject`'s names should match their type names) | 🟩  
 
 *\* Example:*  
-![Anatomy of a System](https://user-images.githubusercontent.com/46461122/153716988-a2d6eb92-67e9-4240-bdd6-eb00f461ae6f.png)
+![Anatomy of a System](https://user-images.githubusercontent.com/46461122/153716988-a2d6eb92-67e9-4240-bdd6-eb00f461ae6f.png)  
 *In the diagram above, `Market` is the root namespace of the `System`. Each `Manager` defines it's own child-namespace, and must never reference one another*
 
 *\*\* For unit testing purposes, you can use the `InternalsVisibleTo` attribute to give your test assemblies access to your `Manager`*
@@ -272,7 +272,7 @@ The root `namespace` of an assembly should be reserved mostly to interfaces, sha
 ## Exceptions
 The `namespaces` rule will be most useful for your *runtime* scripts, where most of the buisness logic of your application will go. However, exceptions can be made for **`Editor` and `Test`** assemblies, since those namespaces are technically different than their respective types. For example, if you have a `Wizard : Entity` in a `WizardsAndGoblins.Wizards` `namespace`, an editor for it would likely be called `WizardEditor` inside a `WizardsAndGoblins.Editor.Wizards` `namespace`. In this case `WizardEditor` *needs to know* about the type in `WizardsAndGoblins.Wizards`.
 
-Another exception to the rule are `Systems`. Since they will be responsible for all `Managers` and their `Entities`, forbidding access their types could become counter-productive. If you deem it neccessary, you *can* apply abstraction between the `System` and its `Managers`. This could be useful if you want to have different `Managers` on different levels of you game, but still maintain the same `System`. For example, you could have an interface `IObjectiveManager` that has two implementations: `CaptureTheFlagManager` and `TeamDeathmatchManager`, one for each game mode. The `System` could use that interface to communicate with them, preserving abstraction between the two.
+Another exception to the rule are `Systems`. Since they will be responsible for all `Managers` and their `Entities`, forbidding access to their types could become counter-productive. If you deem it neccessary, you *can* apply abstraction between the `System` and its `Managers`. This could be useful if you want to have different `Managers` on different levels of you game, but still maintain the same `System`. For example, you could have an interface `IObjectiveManager` that has two implementations: `CaptureTheFlagManager` and `TeamDeathmatchManager`, one for each game mode. The `System` could use that interface to communicate with them, preserving abstraction between the two.
 
 ## How do I abstract?
 There are many ways of achieving abstraction, but here are some examples involving `Managers` and a `System`:
