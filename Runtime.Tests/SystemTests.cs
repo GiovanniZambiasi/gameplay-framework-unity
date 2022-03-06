@@ -161,6 +161,29 @@ namespace MiddleMast.GameplayFramework.Tests
             Assert.IsNull(humbleManager);
         }
 
+        [Test]
+        public void HasManagerSimple()
+        {
+            HumbleSystem system = SystemTestUtilities.CreateSystem<HumbleSystem>(new[]
+            {
+                typeof(AnotherHumbleManager),
+                typeof(HumbleManager),
+            });
+
+            Assert.IsTrue(system.HasManager<HumbleManager>());
+        }
+
+        [Test]
+        public void HasManagerReturnsFalse()
+        {
+            HumbleSystem system = SystemTestUtilities.CreateSystem<HumbleSystem>(new[]
+            {
+                typeof(AnotherHumbleManager),
+            });
+
+            Assert.IsFalse(system.HasManager<HumbleManager>());
+        }
+
         [UnityTest]
         public IEnumerator SetupsUpDuringStart()
         {
