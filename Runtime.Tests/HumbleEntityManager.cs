@@ -8,6 +8,7 @@ namespace MiddleMast.GameplayFramework.Tests
         public override void Register(HumbleEntity entity)
         {
             entity.Setup();
+            entity.OnDisposeWanted += DisposeEntity;
             base.Register(entity);
         }
 

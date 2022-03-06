@@ -89,6 +89,24 @@ namespace MiddleMast.GameplayFramework.Tests
             }
         }
 
+        [Test]
+        public void RemoveEntityDuringTickDoesntSkipNextEntity()
+        {
+            List<HumbleEntity> nonDestructiveEntities = new List<HumbleEntity>();
+
+            HumbleEntityManager entityManager = CreateHumbleEntityManager();
+            HumbleEntity selfDestructingEntity = entityManager.CreateAndRegisterEntity();
+
+            nonDestructiveEntities.Add(entityManager.CreateAndRegisterEntity());
+            nonDestructiveEntities.Add(entityManager.CreateAndRegisterEntity());
+
+            selfDestructingEntity.DisposeInNextTick = true;
+
+            entityManager.Tick(.5f);
+
+            Assert.IsTrue(nonDestructiveEntities.All(entity => entity.TickedAtLeastOnce));
+        }
+
         private HumbleEntityManager CreateHumbleEntityManager()
         {
             GameObject gameObject = new GameObject($"{nameof(HumbleEntityManager)}", typeof(HumbleEntityManager));
