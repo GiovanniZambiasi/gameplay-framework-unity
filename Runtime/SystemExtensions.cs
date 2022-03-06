@@ -8,9 +8,9 @@ namespace MiddleMast.GameplayFramework
         /// Goes through all root objects in a scene. Useful when a system is trying to fulfill a dependency with another system's interface.<br></br>
         /// <b>You should never try to find another system by type.</b> This method should only get called with interfaces as the generic parameter
         /// </summary>
-        public static TDependency FindDependencyInScene<TDependency>(this System system)
+        public static TDependency FindDependencyInScene<TDependency>(this System system, bool includeInactive = true)
         {
-            return system.gameObject.scene.FindRootObjectOfType<TDependency>();
+            return system.gameObject.scene.FindRootObjectOfType<TDependency>(includeInactive);
         }
 
         /// <summary>
@@ -18,13 +18,13 @@ namespace MiddleMast.GameplayFramework
         /// Useful when a system is trying to fulfill a dependency with another system's interface.<br></br>
         /// <b>You should never try to find another system by type.</b> This method should only get called with interfaces as the generic parameter
         /// </summary>
-        public static TDependency FindDependency<TDependency>(this System system)
+        public static TDependency FindDependency<TDependency>(this System system, bool includeInactive = true)
         {
             for (int i = 0; i < SceneManager.sceneCount; i++)
             {
                 Scene scene = SceneManager.GetSceneAt(i);
 
-                TDependency dependency = scene.FindRootObjectOfType<TDependency>();
+                TDependency dependency = scene.FindRootObjectOfType<TDependency>(includeInactive);
 
                 if (dependency != null)
                 {

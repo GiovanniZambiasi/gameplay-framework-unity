@@ -24,7 +24,7 @@ namespace MiddleMast.GameplayFramework.Tests
         public static TSystem CreateSystem<TSystem>(Type[] managers, System.SetupTimings setupTiming = System.SetupTimings.Custom) where TSystem : System
         {
             GameObject systemGameObject = UnityEngine.Object.Instantiate(SystemModelObject);
-            systemGameObject.name = nameof(TSystem);
+            systemGameObject.name = typeof(TSystem).Name;
 
             TSystem system = systemGameObject.AddComponent<TSystem>();
             system.SetupTiming = setupTiming;

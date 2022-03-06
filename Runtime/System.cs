@@ -102,7 +102,7 @@ namespace MiddleMast.GameplayFramework
 
         private void Start()
         {
-            if (_setupTiming == SetupTimings.Start)
+            if (SetupTiming == SetupTimings.Start)
             {
                 Setup();
             }
@@ -110,7 +110,7 @@ namespace MiddleMast.GameplayFramework
 
         private void Awake()
         {
-            if (_setupTiming == SetupTimings.Awake)
+            if (SetupTiming == SetupTimings.Awake)
             {
                 Setup();
             }
