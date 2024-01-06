@@ -1,4 +1,4 @@
-﻿namespace MiddleMast.GameplayFramework.Samples.WizardsAndGoblins
+﻿namespace WizardsAndGoblins
 {
     public interface ISpell
     {

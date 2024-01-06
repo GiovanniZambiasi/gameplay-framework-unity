@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MiddleMast.GameplayFramework.Samples.CustomCallbackOverload
+namespace CustomCallbackOverload
 {
     public class StoreData : ScriptableObject
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MiddleMast.GameplayFramework.Samples.AbstractionWithInterface
+namespace AbstractionWithInterface
 {
     public interface ICheckOutHandler
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MiddleMast.GameplayFramework.Samples.AbstractionWithInterface
+namespace AbstractionWithInterface.Clients.Manager
 {
     public class ClientManager : MonoBehaviour, ICheckOutHandler
     {

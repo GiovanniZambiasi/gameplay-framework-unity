@@ -1,9 +1,9 @@
-﻿using MiddleMast.GameplayFramework.Samples.CustomCallbackOverload.Store;
+﻿using CustomCallbackOverload.Store.Manager;
 using UnityEngine;
 
-namespace MiddleMast.GameplayFramework.Samples.CustomCallbackOverload
+namespace CustomCallbackOverload.System
 {
-    public class MenuSystem : System
+    public class MenuSystem : MiddleMast.GameplayFramework.System
     {
         [SerializeField] private StoreData _storeData;
 

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MiddleMast.GameplayFramework.Samples.WizardsAndGoblins
+namespace WizardsAndGoblins
 {
     public interface ISpellFactory
     {

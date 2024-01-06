@@ -1,8 +1,9 @@
-﻿using MiddleMast.GameplayFramework.Samples.AbstractionWithInterface.Clients;
+﻿using AbstractionWithInterface.Checkout.Manager;
+using AbstractionWithInterface.Clients.Manager;
 
-namespace MiddleMast.GameplayFramework.Samples.AbstractionWithInterface
+namespace AbstractionWithInterface.System
 {
-    public class MarketSystem : System
+    public class MarketSystem : MiddleMast.GameplayFramework.System
     {
         protected override void SetupManagers()
         {

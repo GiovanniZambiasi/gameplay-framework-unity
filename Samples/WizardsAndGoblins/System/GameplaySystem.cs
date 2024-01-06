@@ -1,9 +1,9 @@
-﻿using MiddleMast.GameplayFramework.Samples.WizardsAndGoblins.Spells;
-using MiddleMast.GameplayFramework.Samples.WizardsAndGoblins.Wizards;
+﻿using WizardsAndGoblins.Spells.Manager;
+using WizardsAndGoblins.Wizards.Manager;
 
-namespace MiddleMast.GameplayFramework.Samples.WizardsAndGoblins
+namespace WizardsAndGoblins.System
 {
-    internal class GameplaySystem : System
+    internal class GameplaySystem : MiddleMast.GameplayFramework.System
     {
         protected override void SetupManagers()
         {

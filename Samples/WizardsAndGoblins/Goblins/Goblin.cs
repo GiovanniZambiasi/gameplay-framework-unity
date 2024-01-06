@@ -1,4 +1,6 @@
-﻿namespace MiddleMast.GameplayFramework.Samples.WizardsAndGoblins.Goblins
+﻿using MiddleMast.GameplayFramework;
+
+namespace WizardsAndGoblins.Goblins
 {
     internal class Goblin : Entity
     { }

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using MiddleMast.GameplayFramework;
 using UnityEngine;
 
-namespace MiddleMast.GameplayFramework.Samples.WizardsAndGoblins.Spells
+namespace WizardsAndGoblins.Spells
 {
     internal class Fireball : Entity, ISpell
     {

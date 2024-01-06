@@ -1,0 +1,79 @@
+﻿@startuml
+'https://plantuml.com/class-diagram
+
+package WizardsAndGoblins
+{
+package System
+{
+class GameplaySystem
+}
+
+package Spells
+{
+package Manager
+{
+class SpellManager
+}
+
+class Fireball
+class Heal
+
+SpellManager --> Fireball
+
+SpellManager --> Heal
+
+}
+
+GameplaySystem --> SpellManager
+
+package Wizards
+{
+package Manager
+{
+class WizardManager
+}
+
+class Wizard
+
+WizardManager --> Wizard
+}
+
+GameplaySystem --> WizardManager
+
+package Goblins
+{
+package Manager
+{
+class GoblinManager
+}
+
+class Goblin
+
+GoblinManager --> Goblin
+}
+
+GameplaySystem --> GoblinManager
+
+interface ISpell
+{
+void Activate();
+}
+
+Fireball ..|> ISpell
+
+Heal ..|> ISpell
+
+
+interface ISpellFactory
+{
+ISpell CreateSpell(...);
+}
+
+SpellManager ...|> ISpellFactory
+
+Wizard ..> ISpellFactory
+
+ISpellFactory ..> ISpell
+}
+
+@enduml

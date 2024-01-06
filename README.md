@@ -23,17 +23,17 @@ Games change **a lot** during development, but code *isn't always easy to change
 
 # Callbacks
 
-This framework defines *custom callbacks*. This is done to avoid the inconsistencies and performance concerns of Unity's built-in *life-cycle callbacks\**. Unity callbacks should be avoided as often as possible.
+This framework defines *custom callbacks*. This is done to avoid the inconsistencies and performance concerns of Unity's built-in *life-cycle callbacks**. Unity callbacks should be avoided as often as possible.
 
-<a name="life-cycle-callbacks">\* *Unity's life-cycle callbacks are:* `Awake`, `Start`, `Update`/`LateUpdate`/`FixedUpdate`, and `OnDestroy`</a>
+<a name="life-cycle-callbacks">* *Unity's life-cycle callbacks are:* `Awake`, `Start`, `Update`/`LateUpdate`/`FixedUpdate`, and `OnDestroy`</a>
 
 ## Custom callback cheat sheet
 
 | Keyword | Corresponding Unity Callback |
-| :---: | :---: |
-| Setup | Start/Awake |
-| Dispose | OnDestroy |
-| Tick | Update |
+|:-------:|:----------------------------:|
+|  Setup  |         Start/Awake          |
+| Dispose |          OnDestroy           |
+|  Tick   |            Update            |
 
 ## Why custom callbacks?
 
@@ -42,19 +42,19 @@ Having manual control over the order of the *setup/update/dispose* of your class
 # Rules
 
 ### Severity guide
-Severity | Description
-:---: | :---:
-🟥 | **Severe**. Must always be followed
-🟨 | **Encouraged**. Should mostly be followed, but can have exceptions
-🟩 | **Suggestion**. May not apply to a specific project
+| Severity |                            Description                             |
+|:--------:|:------------------------------------------------------------------:|
+|    🟥    |                **Severe**. Must always be followed                 |
+|    🟨    | **Encouraged**. Should mostly be followed, but can have exceptions |
+|    🟩    |        **Suggestion**. May not apply to a specific project         |
 
 ### General rules
-Rule | [Severity](#severity-guide)
-:--- | :---:
-Keep the root namespace of an assembly the same as the assembly name | 🟥
-The `namespaces` in your scripts must match your folder structure, taking the root namespace of the assembly into consideration | 🟥
-All of your project's scripts must live under the same root folder | 🟨
-All assemblies must live inside their own folder. And that folder must live in the root of your scripts folder. **You cannot have assemblies inside other assemblies**\* | 🟨
+| Rule                                                                                                                                                                     | [Severity](#severity-guide) |
+|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------:|
+| Keep the root namespace of an assembly the same as the assembly name                                                                                                     |             🟥              |
+| The `namespaces` in your scripts must match your folder structure, taking the root namespace of the assembly into consideration                                          |             🟥              |
+| All of your project's scripts must live under the same root folder                                                                                                       |             🟨              |
+| All assemblies must live inside their own folder. And that folder must live in the root of your scripts folder. **You cannot have assemblies inside other assemblies**\* |             🟨              |
 
 *\* Here's an example of an ideal assembly setup:*
 ```
@@ -82,15 +82,15 @@ A `System` is an **entry point with the engine**. It's meant to be an autonomous
 
 ## Rules
 
-Rule | [Severity](#severity-guide)
-:--- | :---:
-Each `System` must be inside it's own `namespace` | 🟥
-Each `System` must be in it's own `GameObject` | 🟥
-**Communication between `Systems` must always be abstracted** (a `System` shouldn't have *any* knowledge about another `System`) | 🟥
-Each `System` should be in a separate [Assembly](https://docs.unity3d.com/Manual/ScriptCompilationAssemblyDefinitionFiles.html) | 🟨
-Keep all `Systems` at the root of a *Scene* | 🟨
-Make all your `Systems` [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\* | 🟨
-Add the `System` suffix to all `Systems` (and the `GameObjects`' names should match the type names) | 🟩    
+| Rule                                                                                                                                            | [Severity](#severity-guide) |
+|:------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------:|
+| Each `System` must be inside its own `namespace` (optionally named `System`)<br/>This helps enforce the [Namespaces Rule](#the-namespaces-rule) |             🟥              |
+| Each `System` must be in its own `GameObject`                                                                                                   |             🟥              |
+| **Communication between `Systems` must always be abstracted** (a `System` shouldn't have *any* knowledge about another `System`)                |             🟥              |
+| Each `System` should be in a separate [Assembly](https://docs.unity3d.com/Manual/ScriptCompilationAssemblyDefinitionFiles.html)                 |             🟨              |
+| Keep all `Systems` at the root of a *Scene*                                                                                                     |             🟨              |
+| Make all your `Systems` [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\*                     |             🟨              |
+| Add the `System` suffix to all `Systems` (and the `GameObjects`' names should match the type names)                                             |             🟩              |
 
 *\* For unit testing purposes, you can use the `InternalsVisibleTo` attribute to give your test assemblies access to your `System`*
 
@@ -101,30 +101,31 @@ A `System` can encapsulate it's behaviour using `Managers`. It can have any numb
 <a name="managers-hierarchy">![image](https://user-images.githubusercontent.com/46461122/152656464-d37024dc-b370-4d74-8fb4-e41ed753a112.png)</a>
 
 During `Setup`, the `System` will initialize each `Manager`, in the exact order of the hierarchy. In the example above, `EarlyManager` will be setup *first*, and `LateManager` will be setup *last*. This is also the order in which the `Tick` funcitions will get called.
-`Dispose` is a bit different. When the `System` is disposing it's `Managers`, this will happen in the **reverse order**. In the example above, `LateManager` will be the *first disposed*, and `EarlyManager` will be *last*. In most cases, this is the desired behaviour.
+`Dispose` is a bit different because it happens in **reverse**. In the example above, `LateManager` will be the *first disposed*, and `EarlyManager` will be *last*. In most cases, this is the desired behaviour.
 
 # Managers
-A `Manager` is the basic *building-block* of a `System`. The main difference between `Systems` and `Managers` is that **`Managers` are not autonomous**. This means that their life-cycles must be managed entirely by a `System`. In other words, they must not implement any [*life-cycle related*](#life-cycle-callbacks) Unity callbacks. `Managers` already implement default life-cycle callbacks, but more callbacks can be defined to match your game's needs. In a turn-based game, you could define `TurnEnd` and `TurnStart` callbacks, passed along to your `Managers` by some `GameplaySystem`, for example.
+A `Manager` is the basic *building-block* of a `System`. The main difference between `Systems` and `Managers` is that **`Managers` are not autonomous**. This means that their life-cycles must be managed entirely by their owning `System`. In other words, they must not implement any [*life-cycle related*](#callbacks) Unity callbacks. `Managers` already implement default life-cycle callbacks, but more callbacks can be defined to match your game's needs. In a turn-based game, you could define `TurnEnd` and `TurnStart` callbacks, passed along to your `Managers` by some `GameplaySystem`, for example.
 
 ## Rules
 
-Rule | [Severity](#severity-guide)
-:--- | :---:
-**Communication between `Managers` must always be abstracted (a `Manager` shouldn't have any knowledge about another `Manager`)** | 🟥
-`Managers` must define their own `namespaces`\*| 🟥
-`Managers` **must not implement any [*life-cycle related*](#life-cycle-callbacks)** Unity callbacks | 🟥
-Each `Managers` must live in it's own `GameObject`, and must be a [first-level-child](#managers-hierarchy) of a `System` | 🟥
-Make all your `Managers` [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\*\* | 🟨
-Add the `Manager` suffix to all `Managers` (and their `GameObject`'s names should match their type names) | 🟩  
+| Rule                                                                                                                                            | [Severity](#severity-guide) |
+|:------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------:|
+| **Communication between `Managers` must always be abstracted (a `Manager` shouldn't have any knowledge about another `Manager`)**               |             🟥              |
+| `Managers` must define their own `namespaces`\* (Optionally named `Manager`)<br/>This helps enforce the [Namespaces Rule](#the-namespaces-rule) |             🟥              |
+| `Managers` **must not implement any [*life-cycle related*](#callbacks)** Unity callbacks                                                        |             🟥              |
+| Each `Manager` must live in its own `GameObject`, and must be a [first-level-child](#managers-hierarchy) of a `System`                          |             🟥              |
+| Make all your `Managers` [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\*\*                  |             🟨              |
+| Add the `Manager` suffix to all `Managers` (and their `GameObject`'s names should match their type names)                                       |             🟩              |
+*\* An example will be shown in the chapter below*
+<br/>*\*\* For unit testing purposes, you can use the `InternalsVisibleTo` attribute to give your test assemblies access to your `Manager`*
 
-*\* Example:*  
-![Anatomy of a System](https://user-images.githubusercontent.com/46461122/153716988-a2d6eb92-67e9-4240-bdd6-eb00f461ae6f.png)  
-*In the diagram above, `Market` is the root namespace of the `System`. Each `Manager` defines it's own child-namespace, and must never reference one another*
+## Anatomy of a System
 
-*\*\* For unit testing purposes, you can use the `InternalsVisibleTo` attribute to give your test assemblies access to your `Manager`*
+![Anatomy of a System](Documentation/Anatomy%20of%20a%20System.png)  
+In the diagram above, `Market` is the root namespace of the assembly. Each `Manager` defines its own child namespace (such as ``Basket`` or ``Clients``), and their corresponding `Manager` namespaces. Note that ``Managers`` should never depend upon one another, or depend upon the internals of anonther manager's namespace. This rule becomes clearer in the [Abstraction](#abstraction) chapter.
 
 ## Managing dependencies
-`Managers` are likely to have varying dependencies that must be fulfilled during their `Setup`. You could have a `StoreManager` which needs a reference to a `StoreData` `ScriptableObject`, for example. In this case, the default `Setup` callback may not be so useful, and *custom overloads* should be defined. It's encouraged to use the same naming for your default callback overloads. For example, the `StoreManager` could have a `Setup(StoreData storeData)` overload for the default `Setup` callback. The `System` could then *override* the `SetupManagers` method, and call the overloaded version of `Setup`:
+`Managers` are likely to have varying dependencies that must be fulfilled during their `Setup`. For example, you could have a `StoreManager` which needs a reference to a `StoreData` `ScriptableObject`. In this case, the default `Setup` callback may not be so useful, and *custom overloads* should be defined. It's encouraged to use the same naming for your default callback overloads. For example, the `StoreManager` could have a `Setup(StoreData storeData)` overload for the default `Setup` callback. The `System` could then *override* the `SetupManagers` method, and call the overloaded version of `Setup`:
 ```cs
 public class MenuSystem : System
 {
@@ -149,38 +150,38 @@ public class Wizard : Entity
 ```
 
 ## Rules
-Rule | [Severity](#severity-guide)
-:--- | :---:
-`Entities` cannot live in the root `namespace` of an assembly | 🟥
-`Entities` **must not implement any [*life-cycle related*](#life-cycle-callbacks)** Unity callbacks | 🟥
-Each `Entity` must live in it's own `GameObject` | 🟥
-**Communication between different entities must always be abstracted** (an `Entity` shouldn't have any knowledge about another `Entity`) | 🟥
-Each `Entity` must have a corresponding `Manager`\* | 🟨
-Make all your `Entities` [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\*\* | 🟨
+| Rule                                                                                                                           | [Severity](#severity-guide) |
+|:-------------------------------------------------------------------------------------------------------------------------------|:---------------------------:|
+| `Entities` **must not implement any [*life-cycle related*](#callbacks)** Unity callbacks                                       |             🟥              |
+| Each `Entity` must live in it's own `GameObject`                                                                               |             🟥              |
+| Each `Entity` must have a corresponding `Manager`\*                                                                            |             🟨              |
+| Make all your `Entities` [`internal`](https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/keywords/internal)\*\* |             🟨              |
 
 *\* There could be some cases where a `System` is simple enough that it can manage entities by itself*  
 *\*\*For unit testing purposes, you can use the `InternalsVisibleTo` attribute to give your test assemblies access to your `Entity`**
 
 ## What about composition?
-Composition should always be strived for. However, in some cases, we need a "central point" for our game's entities to orchestrate *complex interactions* between `Components`. For example: Say you had a `HealthComponent` and a `MovementComponent`. You want to reduce your `Player`'s movement speed when their health drops below 50%. To achieve this, you need some sort of communication between those two components. That's where the `Player` `Entity` comes in:
+In game development, most modern engines encourage composition, and for good reason. However, in some cases, we need a "central point" for our game's entities to orchestrate *complex interactions* between `Components`. For example, say you had a `HealthComponent` and a `MovementComponent`. You want to reduce your `Player`'s movement speed when their health drops below 50%. To achieve this, you need some sort of communication between those two components. That's where the `Player` `Entity` comes in:
 ```cs
 public class Player : Entity
 {
     private HealthComponent _health;
     private MovementComponent _movement;
+    private float _slowSpeed;
 
     public override void Setup()
     {
         base.Setup();
 
         _health.OnDamageTaken += HandleDamageTaken;
+        _slowSpeed = _movement.Speed * .66f;
     }
 
     private void HandleDamageTaken()
     {
         if (_health.HealthRatio <= .5f)
         {
-            _movement.Speed *= .66f;
+            _movement.Speed = _slowSpeed;
         }
     }
 }
@@ -193,17 +194,18 @@ With good abstraction, you *could* achieve this "slow-down-when-almost-dying" be
 Later in this document, there's an [example](#wizards-and-goblins) of how to implement a `Wizard` that can cast `Fireballs` at `Goblins` following all the rules of this framework.
 
 # Components
-Components are tiny, autonomous, encapsulated slices of behaviour that live inside your `Systems`, `Managers` or `Entities`. In fact, any `MonoBehaviour` *is considered* a component by the engine. This doesn't mean that all `MonoBehaviours` you create are components *from a conceptual standpoint*. `Systems`, `Managers` or `Entities`, for example, are *not* components. Most components are modular by nature. Some are so modular that they can just be added into an object and they'll work, without any need for external help. This is a **great resource**, and it should be leveraged extensively. Since we want to preserve the modular and autonomous nature of *most* components, they **can** implement [Unity's life-cycle callbacks](#life-cycle-callbacks).
+Components are tiny, autonomous, encapsulated slices of behaviour that live inside your `Systems`, `Managers` or `Entities`. In fact, any `MonoBehaviour` *is considered* a component by the engine. This doesn't mean that all `MonoBehaviours` you create are components *from a conceptual standpoint*. For example, `Systems`, `Managers` or `Entities` are *not* components. The only reason we make them `MonoBehaviours` is because Unity doesn't allow us to inherit from `GameObject`.<br/>
+Most components are modular by nature. Some are so modular that they can just be added into an object and they'll work, without any need for external help. This is a **great resource**, and it should be leveraged extensively. Since we want to preserve the modular and autonomous nature of *most* components, they **can** implement [Unity's life-cycle callbacks](#callbacks).
 
 ## Rules
-Rule | [Severity](#severity-guide)
-:--- | :---:
-Add the `Component` suffix to all your components | 🟩
+| Rule                                              | [Severity](#severity-guide) |
+|:--------------------------------------------------|:---------------------------:|
+| Add the `Component` suffix to all your components |             🟩              |
 
 ## Creating a Component
-To create a component, simply make a `MonoBehaviour` how you usually would. A great example of a modular component is the `Rigidbody`. You can just add it to any object and they'll fall downwards (or upwards), depending on your gravity settings. If you want your components to be managed by their owning object, you can do so. It's up to the developer to decide whether the component is in fact autonomous or not:
+To create a component, simply make a `MonoBehaviour` how you usually would. A great example of a modular component is the `Rigidbody`. You can just add it to any object and they'll fall downwards (or upwards, depending on your gravity settings). If you want your components to be managed by their owning object, you can do so. It's up to the developer to decide whether the component is in fact autonomous or not:
 
-Take a `BillboardComponent`, for example. It can simply point a transform towards the main camera on `Update`. This is a component that *can* be autonomous:
+For example, take a `BillboardComponent`. It can simply point a transform towards the main camera on `Update`. This is a component that *can* be autonomous:
 ```cs
 namespace DogsAndBillboards
 {
@@ -256,18 +258,28 @@ Abstraction *is very important*. It's an integral part of writing clean code, an
 ## When do I use abstraction?
 The rules from the previous chapters were crafted to answer this question. This framework defines `namespaces` as *layers of abstraction*. The idea is that each `namespace` defines a *system boundary*. Whenever you need to have communication between two separate `namespaces`, abstraction should be applied. This boils down to a simple rule, that can be easily followed:
 
+### The namespaces rule
 - **A `Type` can only know about another `Type` if they're in the same `namespace`** 🟥
-    - This applies hierarchically, so nested `namespaces` *can know about* `Types` in their parent `namespace`
-    - This doesn't mean that you shouldn't use abstraction within a particular `namespace`. It can, and should, be considered
+    - This applies hierarchically, so nested `namespaces` **can know about** `Types` in their parent `namespace`
+    - This **doesn't mean** that you shouldn't use abstraction within a particular `namespace`. It can, and should, be considered
 
-From here onwards, the above rule will be referred to as **the namespaces rule**. Combining it with the rules from the other chapters will help you apply abstraction to your codebase **very consistently**. Here's an example:
+Combining this with the rules from the other chapters will help you apply abstraction to your codebase **very consistently**. Here's an example:
 
 ![Abstraction map](https://user-images.githubusercontent.com/46461122/152663172-970889fc-f20d-4f28-bf84-33a00ca6ffa9.png)
 
 In the image above, the dotted lines represent a map of *who knows whom*. Notice how all the lines coming from the nested namespace (`TheAncientScrolls.Dragons`) have arrows, symbolizing that they only go one way. In the parent namespace (`TheAncientScrolls`), there are 3 types: `AttributeSet`, `IInteractable`, `ICatchFire`. They can all know about each other, as they're in the same `namespace`. However, they **can't know about** any types inside `TheAncientScrolls.Dragons`. On the other hand, `TheAncientScrolls.Dragons` is still a part of `TheAncientScrolls`. Therefore, types inside `TheAncientScrolls.Dragons` **can know about** types in `TheAncientScrolls`.
 
 ## So who can go in the root `namespace`?
-The root `namespace` of an assembly should be reserved mostly to interfaces, shared data objects, extension methods and some components. **No `Entity` or `Manager`** should be in the root `namespace` of an assembly.
+The root `namespace` of an assembly should be reserved mostly to interfaces, shared data objects, extension methods and some components.<br/>
+After applying this framework extensively I've found that types which are *root-namespace-worthy* often fit a few of the below criteria:
+1. Types that are depended upon by many other types
+1. Types that don’t have dependencies to other types inside special namespaces
+1. Types that are likely **not to change** *too much*
+1. Abstract interfaces used for communication between types in separate namespaces
+1. Data-only types
+1. Global utility classes/extension methods
+ 
+There’s nothing wrong with moving existing types into the root namespace later on, after you've found yourself having to create *too many interfaces* for it.
 
 ## Exceptions
 The `namespaces` rule will be most useful for your *runtime* scripts, where most of the buisness logic of your application will go. However, exceptions can be made for **`Editor` and `Test`** assemblies, since those namespaces are technically different than their respective types. For example, if you have a `Wizard : Entity` in a `WizardsAndGoblins.Wizards` `namespace`, an editor for it would likely be called `WizardEditor` inside a `WizardsAndGoblins.Editor.Wizards` `namespace`. In this case `WizardEditor` *needs to know* about the type in `WizardsAndGoblins.Wizards`.
@@ -292,12 +304,13 @@ There are many ways of achieving abstraction, but here are some examples involvi
 ## Wizards and Goblins
 Our goal in this chapter is to make a `Wizard` that can cast a `Fireball` at a `Goblin`. This should provide a good understanding of how the framework is meant to be used.
 
-This example requires 3 `Entities` with corresponding `Manager`s (and therefore, 3 nested namespaces):  
-![image](https://user-images.githubusercontent.com/46461122/152685659-967cbe6e-41d0-4ed8-9ec9-218fc611a48b.png)  
-*Consider each folder in the example a C# `namespace`*
+This example requires 3 `Entities` with corresponding `Managers`:  
+![wizards-and-goblins-folders](./Documentation/WizardsAndGoblinsFolder.png)  
+*Consider each folder in the example a C# `namespace`*<br/>
+![wizards-and-goblins](./Documentation/WizardsAndGoblins.png)
 
 ### Casting a fireball
-Now, the `Wizard` needs to be able to cast a `Fireball`, but they're in separate namespaces. Simply including the `using WizardsAndGoblins.Spells` directive in any of the `Wizard`'s scripts would be a violation of the [namespaces rule](#when-do-i-use-abstraction). This is where abstraction comes into play:
+Now, the `Wizard` needs to be able to cast a `Fireball`, but they're in separate namespaces. Simply including the `using WizardsAndGoblins.Spells` directive in any of the `Wizard`'s scripts would be a violation of the [Namespaces Rule](#the-namespaces-rule). This is where abstraction comes into play.
 
 We need to define a communication layer between `Wizards` and their `Spells`. For that, we will declare an interface:
 ```cs
@@ -330,7 +343,12 @@ namespace WizardsAndGoblins.Spells
     }
 }
 ```
-For now, the `Activate` method is all the `Wizard` needs to be able to communicate with it's `Fireball`. Now, *how do we create an `Entity` from another `Entity`*? For that, we will need another interface:
+For now, the `Activate` method is all the `Wizard` needs to be able to communicate with its `Fireball`. 
+
+![wizards-and-goblins-ispell](./Documentation/WizardsAndGoblins_ISpell.png)
+
+Now we need to enable the `Wizard` to create the `Fireball` `Entity`. How do we do that, considering `Fireball` is still inaccessible to `Wizard`?<br/>
+For that we need another interface:
 ```cs
 namespace WizardsAndGoblins
 {
@@ -381,7 +399,10 @@ namespace WizardsAndGoblins.Spells
     }
 }
 ```
-I have also added some code that makes the `SpellManager` register spells, and update them using `Tick`. 
+I have also added some code that makes the `SpellManager` register spells, and update them using `Tick`.
+
+![wizards-and-goblins-ispellfactory](./Documentation/WizardsAndGoblins_ISpellFactory.png)
+<br/>*I'm simplifying the dependencies here to keep the UML tidy. In this case, `Wizard` also depends upon `ISpell`*
 
 With `ISpellFactory`, we managed to create an abstract way to spawn instances of `Fireball`. Now, we can define the `Wizard`'s `CastSpell` method:
 ```cs
@@ -470,7 +491,8 @@ namespace WizardsAndGoblins.Spells
     }
 }
 ```
-Also, notice how neither the `Wizard` nor the `WizardManager` know how a spell is *created, managed or destroyed*. This gives us the flexibility of using whichever infrastructure we need for `ISpell`. For example, if we had to use a pre built spell plugin from the asset store, we could define `ISpell` and `ISpellFactory` implementations to communicate with it, and the rest of our codebase wouldn't even know. That is *✨the power of abstraction ✨*
+Also, notice how neither the `Wizard` nor the `WizardManager` know how a spell is *created, managed or destroyed*. This gives us the flexibility of using whichever infrastructure we need for `ISpell`. For example, if we had to use a pre built spell plugin from the asset store, we could define `ISpell` and `ISpellFactory` implementations to communicate with it, and the rest of our codebase wouldn't even know.<br/>
+Another great benefit of using interfaces this way is that we can create fake *(hollow, humble, mock etc..)* implementations of our dependencies to use in automated tests. For example, If we're writing a unit test for the `Wizard` class, we could create a `HumbleSpell : ISpell` class that does exactly what the test needs it to do, without the headache of having to create an actual entity.<br/> That is *✨the power of abstraction ✨*
 
 ### Damaging the Goblin
 // Tbd..

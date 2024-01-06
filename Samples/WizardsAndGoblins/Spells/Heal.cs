@@ -1,4 +1,6 @@
-﻿namespace MiddleMast.GameplayFramework.Samples.WizardsAndGoblins.Spells
+﻿using MiddleMast.GameplayFramework;
+
+namespace WizardsAndGoblins.Spells
 {
     internal class Heal : Entity, ISpell
     {

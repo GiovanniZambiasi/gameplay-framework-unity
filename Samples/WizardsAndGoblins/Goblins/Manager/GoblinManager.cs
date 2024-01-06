@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace MiddleMast.GameplayFramework.Samples.WizardsAndGoblins.Goblins
+namespace WizardsAndGoblins.Goblins.Manager
 {
-    internal class GoblinManager : Manager
+    internal class GoblinManager : MiddleMast.GameplayFramework.Manager
     {
         private List<Goblin> _goblins = new List<Goblin>();
 

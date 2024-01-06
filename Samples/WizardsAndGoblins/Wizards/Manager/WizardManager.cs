@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace MiddleMast.GameplayFramework.Samples.WizardsAndGoblins.Wizards
+namespace WizardsAndGoblins.Wizards.Manager
 {
-    internal class WizardManager : Manager
+    internal class WizardManager : MiddleMast.GameplayFramework.Manager
     {
         [SerializeField] private Wizard _wizardPrefab;
 

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MiddleMast.GameplayFramework.Samples.AbstractionWithInterface.Clients
+namespace AbstractionWithInterface.Checkout.Manager
 {
     public class CheckoutManager : MonoBehaviour
     {

@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using MiddleMast.GameplayFramework;
+using UnityEngine;
 
-namespace MiddleMast.GameplayFramework.Samples.WizardsAndGoblins.Wizards
+namespace WizardsAndGoblins.Wizards
 {
     internal class Wizard : Entity
     {

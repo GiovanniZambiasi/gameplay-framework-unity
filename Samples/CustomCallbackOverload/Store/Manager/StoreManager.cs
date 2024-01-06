@@ -1,6 +1,6 @@
-﻿namespace MiddleMast.GameplayFramework.Samples.CustomCallbackOverload.Store
+﻿namespace CustomCallbackOverload.Store.Manager
 {
-    public class StoreManager : Manager
+    public class StoreManager : MiddleMast.GameplayFramework.Manager
     {
         public void Setup(StoreData storeData)
         {

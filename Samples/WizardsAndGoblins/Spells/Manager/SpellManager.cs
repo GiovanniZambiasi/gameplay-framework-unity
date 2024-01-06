@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using MiddleMast.GameplayFramework;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace MiddleMast.GameplayFramework.Samples.WizardsAndGoblins.Spells
+namespace WizardsAndGoblins.Spells.Manager
 {
-    internal class SpellManager : Manager, ISpellFactory
+    internal class SpellManager : MiddleMast.GameplayFramework.Manager, ISpellFactory
     {
         [SerializeField] private GameObject _spellPrefab;
 

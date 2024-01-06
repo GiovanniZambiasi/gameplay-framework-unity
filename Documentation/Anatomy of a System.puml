@@ -3,15 +3,32 @@
 
 package Market
 {
+package System
+{
 class MarketSystem
+}
 
 package Market.Basket
 {
+package Manager
+{
 class BasketManager
+}
+
+class Basket
+
+BasketManager --> Basket
 }
 package Market.Clients
 {
+package Manager
+{
 class ClientManager
+}
+
+class Client
+
+ClientManager --> Client
 }
 
 MarketSystem -down-> BasketManager 
